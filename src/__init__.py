@@ -1,7 +1,9 @@
 from flask import Flask, jsonify
 import os
 from src.database import db
-from src.organizations import organizations
+from src.endpoint_organization import organization
+from src.endpoint_admin import admin
+from src.endpoint_super_admin import super_admin
 
 
 def create_app(test_config=None):
@@ -18,15 +20,17 @@ def create_app(test_config=None):
     else:
         app.config.from_mapping(test_config)
 
-    @app.route('/')
+    @app.route("/")
     def root():
         return jsonify({
-            'message': 'hello world!'
+            "message": "hello world!"
         })
 
     db.app = app
     db.init_app(app)
 
-    app.register_blueprint(organizations)
+    app.register_blueprint(organization)
+    app.register_blueprint(admin)
+    app.register_blueprint(super_admin)
     
     return app

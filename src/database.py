@@ -4,18 +4,34 @@ import random, string, enum
 
 db = SQLAlchemy()
 
+class SuperAdmin(db.Model):
+    __tablename__ = "super_admin"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    email = db.Column(db.String, nullable=False, unique=True)
+    password = db.Column(db.String, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.now())
+
+    Organizations = db.relationship('Organization', backref='super_admin_backref', lazy=True, uselist=False)
+
+    def __repr__(self):
+        return '<Super Admin %r>' % self.email
+
 class Organization(db.Model):
+    __tablename__ = "organization"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now())
     description = db.Column(db.String, nullable=True)
+    super_admin_id = db.Column(db.Integer, db.ForeignKey('super_admin.id'), nullable=False)
 
-    admins = db.relationship('Admin', backref='org', lazy=True)
+    admins = db.relationship('Admin', backref='organization_backref', lazy=True)
 
     def __repr__(self):
         return '<Organization %r>' % self.name
 
 class Admin(db.Model):
+    __tablename__ = "admin"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     email = db.Column(db.String, nullable=False, unique=True)
@@ -23,12 +39,13 @@ class Admin(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.now())
     organization_id = db.Column(db.Integer, db.ForeignKey('organization.id'), nullable=False)
 
-    queues = db.relationship('Queue', backref='admin', lazy=True)
+    queues = db.relationship('Queue', backref='admin_backref', lazy=True)
 
     def __repr__(self):
         return '<Admin %r>' % self.email
 
 class User(db.Model):
+    __tablename__ = "user"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     email = db.Column(db.String, nullable=False, unique=True)
@@ -42,6 +59,7 @@ class QueueUserStatus(enum.Enum):
     done = "done"
 
 class QueueUser(db.Model):
+    __tablename__ = "queue_user"
     id = db.Column(db.Integer, primary_key=True)
     queue_id = db.Column(db.Integer, db.ForeignKey('queue.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -58,6 +76,7 @@ class QueueStatus(enum.Enum):
     off = "off"
 
 class Queue(db.Model):
+    __tablename__ = "queue"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now())

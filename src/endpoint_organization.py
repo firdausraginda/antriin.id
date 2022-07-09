@@ -2,10 +2,11 @@ from flask import Blueprint, request, jsonify
 from src.constants.http_status_code import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_404_NOT_FOUND
 from src.database import Organization, db
 
-organizations = Blueprint("organizations", __name__, url_prefix="/api/v1/organizations")
 
-@organizations.route("/", methods=["POST", "GET"])
-def post_and_get_organizations():
+organization = Blueprint("organization", __name__, url_prefix="/api/v1/organization")
+
+@organization.route("/", methods=["POST", "GET"])
+def post_and_get_organization():
 
     if request.method == "GET":
         org_result = Organization.query.all()
@@ -16,7 +17,8 @@ def post_and_get_organizations():
                 "id": org.id,
                 "name": org.name,
                 "created_at": org.created_at,
-                "description": org.description
+                "description": org.description,
+                "super_admin_id": org.super_admin_id
             })
         
         return jsonify({
@@ -27,10 +29,9 @@ def post_and_get_organizations():
         body_data = request.get_json()
 
         org = Organization(
-            id=body_data.get("id"),
             name=body_data.get("name"),
-            created_at=body_data.get("created_at"),
-            description=body_data.get("description")
+            description=body_data.get("description"),
+            super_admin_id=body_data.get("super_admin_id")
         )
 
         db.session.add(org)
@@ -38,10 +39,11 @@ def post_and_get_organizations():
         
         return jsonify({
             "name": body_data.get("name"),
-            "description": body_data.get("description")
+            "description": body_data.get("description"),
+            "super_admin_id": body_data.get("super_admin_id")
         }), HTTP_201_CREATED
 
-@organizations.get("/<int:id>")
+@organization.get("/<int:id>")
 def get_organization(id):
     org_result = Organization.query.filter_by(id=id).first()
 
@@ -54,10 +56,11 @@ def get_organization(id):
         "id": org_result.id,
         "name": org_result.name,
         "created_at": org_result.created_at,
-        "description": org_result.description
+        "description": org_result.description,
+        "super_admin_id": org_result.super_admin_id
     }), HTTP_200_OK
             
-@organizations.delete("/<int:id>")
+@organization.delete("/<int:id>")
 def delete_organization(id):
     org_result = Organization.query.filter_by(id=id).first()
 
@@ -71,8 +74,8 @@ def delete_organization(id):
 
     return ({}), HTTP_204_NO_CONTENT
 
-@organizations.put("/<int:id>")
-@organizations.patch("/<int:id>")
+@organization.put("/<int:id>")
+@organization.patch("/<int:id>")
 def edit_organization(id):
     org_result = Organization.query.filter_by(id=id).first()
 
@@ -85,10 +88,12 @@ def edit_organization(id):
 
     org_result.name = body_data.get("name")
     org_result.description = body_data.get("description")
+    org_result.super_admin_id = body_data.get("super_admin_id")
 
     db.session.commit()
 
     return jsonify({
         "name": body_data.get("name"),
-        "description": body_data.get("description")
+        "description": body_data.get("description"),
+        "super_admin_id": body_data.get("super_admin_id")
     }), HTTP_200_OK
