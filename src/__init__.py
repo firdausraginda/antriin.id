@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 import os
 from src.database import db
+from src.organizations import organizations
 
 
 def create_app(test_config=None):
@@ -25,5 +26,7 @@ def create_app(test_config=None):
 
     db.app = app
     db.init_app(app)
+
+    app.register_blueprint(organizations)
     
     return app
