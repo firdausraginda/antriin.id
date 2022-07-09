@@ -51,6 +51,8 @@ class User(db.Model):
     email = db.Column(db.String, nullable=False, unique=True)
     created_at = db.Column(db.DateTime, default=datetime.now())
 
+    users_queues = db.relationship('QueueUser', backref='user_backref', lazy=True)
+
     def __repr__(self):
         return '<User %r>' % self.name
 
@@ -61,11 +63,11 @@ class QueueUserStatus(enum.Enum):
 class QueueUser(db.Model):
     __tablename__ = "queue_user"
     id = db.Column(db.Integer, primary_key=True)
-    queue_id = db.Column(db.Integer, db.ForeignKey('queue.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     status = db.Column(db.Enum(QueueUserStatus), nullable=False, default="in_queque")
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
+    queue_id = db.Column(db.Integer, db.ForeignKey('queue.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
         return '<QueueUser %r>' % self.queue_id
@@ -85,6 +87,8 @@ class Queue(db.Model):
     status = db.Column(db.Enum(QueueStatus), nullable=False, default="off")
     short_url = db.Column(db.String, nullable=False)
     admin_id = db.Column(db.Integer, db.ForeignKey('admin.id'), nullable=False)
+
+    queues_users = db.relationship('QueueUser', backref='queue_backref', lazy=True)
 
     def generate_short_url(self):
         random_string = ''.join(random.choices(string.ascii_letters, k=5))
