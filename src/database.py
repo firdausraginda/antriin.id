@@ -12,7 +12,7 @@ class SuperAdmin(db.Model):
     password = db.Column(db.String, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now())
 
-    Organizations = db.relationship('Organization', backref='super_admin_backref', lazy=True, uselist=False)
+    organization = db.relationship('Organization', backref='super_admin', lazy=True, uselist=False)
 
     def __repr__(self):
         return '<Super Admin %r>' % self.email
@@ -23,9 +23,9 @@ class Organization(db.Model):
     name = db.Column(db.String, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now())
     description = db.Column(db.String, nullable=True)
-    super_admin_id = db.Column(db.Integer, db.ForeignKey('super_admin.id'), nullable=False)
+    super_admin_id = db.Column(db.Integer, db.ForeignKey('super_admin.id'), nullable=False, unique=True)
 
-    admins = db.relationship('Admin', backref='organization_backref', lazy=True)
+    admins = db.relationship('Admin', backref='organization', lazy=True)
 
     def __repr__(self):
         return '<Organization %r>' % self.name
@@ -39,7 +39,7 @@ class Admin(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.now())
     organization_id = db.Column(db.Integer, db.ForeignKey('organization.id'), nullable=False)
 
-    queues = db.relationship('Queue', backref='admin_backref', lazy=True)
+    queues = db.relationship('Queue', backref='admin', lazy=True)
 
     def __repr__(self):
         return '<Admin %r>' % self.email
@@ -51,7 +51,7 @@ class User(db.Model):
     email = db.Column(db.String, nullable=False, unique=True)
     created_at = db.Column(db.DateTime, default=datetime.now())
 
-    users_queues = db.relationship('QueueUser', backref='user_backref', lazy=True)
+    queues_users = db.relationship('QueueUser', backref='user', lazy=True)
 
     def __repr__(self):
         return '<User %r>' % self.name
@@ -88,7 +88,7 @@ class Queue(db.Model):
     short_url = db.Column(db.String, nullable=False)
     admin_id = db.Column(db.Integer, db.ForeignKey('admin.id'), nullable=False)
 
-    queues_users = db.relationship('QueueUser', backref='queue_backref', lazy=True)
+    queues_users = db.relationship('QueueUser', backref='queue', lazy=True)
 
     def generate_short_url(self):
         random_string = ''.join(random.choices(string.ascii_letters, k=5))
