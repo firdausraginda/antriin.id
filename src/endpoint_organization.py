@@ -3,6 +3,7 @@ from src.constants.http_status_code import HTTP_200_OK, HTTP_201_CREATED, HTTP_2
 from src.database import Organization, SuperAdmin, db
 from src.auth.auth_super_admin import auth
 
+
 organization = Blueprint("organization", __name__, url_prefix="/api/v1/organization")
 
 @organization.route("/", methods=["POST", "GET"])
