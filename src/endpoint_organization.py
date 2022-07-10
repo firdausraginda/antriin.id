@@ -10,8 +10,10 @@ organization = Blueprint("organization", __name__, url_prefix="/api/v1/organizat
 @auth.login_required
 def post_and_get_organization():
 
+    super_admin_result = SuperAdmin.query.filter_by(email=auth.current_user()).first()
+
     if request.method == "GET":
-        super_admin_result = SuperAdmin.query.filter_by(email=auth.current_user()).first()
+        
         org_result = Organization.query.filter_by(super_admin_id=super_admin_result.id).all()
 
         data = []
@@ -29,7 +31,6 @@ def post_and_get_organization():
         }), HTTP_200_OK
            
     else:
-        super_admin_result = SuperAdmin.query.filter_by(email=auth.current_user()).first()
         body_data = request.get_json()
 
         org = Organization(
