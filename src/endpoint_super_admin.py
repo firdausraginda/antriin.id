@@ -29,18 +29,18 @@ def post_and_get_super_admin():
         body_data = request.get_json()
 
         super_admin = SuperAdmin(
-            name=body_data.get("name"),
-            email=body_data.get("email"),
-            password=body_data.get("password")
+            name = body_data.get("name"),
+            email = body_data.get("email"),
+            password = body_data.get("password")
         )
 
         db.session.add(super_admin)
         db.session.commit()
         
         return jsonify({
-            "name":body_data.get("name"),
-            "email":body_data.get("email"),
-            "password":body_data.get("password")
+            "name": body_data.get("name"),
+            "email": body_data.get("email"),
+            "password": body_data.get("password")
         }), HTTP_201_CREATED
 
 @super_admin.get("/<int:id>")
@@ -95,5 +95,5 @@ def edit_super_admin(id):
     return jsonify({
         "name": body_data.get("name"),
         "email": body_data.get("email"),
-        "password": body_data.get("password"),
+        "password": body_data.get("password")
     }), HTTP_200_OK

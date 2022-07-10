@@ -53,6 +53,11 @@ pip3 install python-dotenv
 pip3 install Flask-SQLAlchemy
 ```
 
+* install [Flask HTTP-Auth](https://flask-httpauth.readthedocs.io/en/latest/)
+```sh
+pip3 install Flask-HTTPAuth
+```
+
 ## Note
 
 ### [Application Factory](https://flask.palletsprojects.com/en/2.1.x/tutorial/factory/)

@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from src.constants.http_status_code import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_404_NOT_FOUND
+from src.constants.http_status_code import HTTP_200_OK, HTTP_201_CREATED
 from src.database import Admin, db
 
 
@@ -30,18 +30,18 @@ def post_and_get_admin():
         body_data = request.get_json()
 
         admin = Admin(
-            name=body_data.get("name"),
-            email=body_data.get("email"),
-            password=body_data.get("password"),
-            organization_id=body_data.get("organization_id")
+            name = body_data.get("name"),
+            email = body_data.get("email"),
+            password = body_data.get("password"),
+            organization_id = body_data.get("organization_id")
         )
 
         db.session.add(admin)
         db.session.commit()
         
         return jsonify({
-            "name":body_data.get("name"),
-            "email":body_data.get("email"),
-            "password":body_data.get("password"),
-            "organization_id":body_data.get("organization_id")
+            "name": body_data.get("name"),
+            "email": body_data.get("email"),
+            "password": body_data.get("password"),
+            "organization_id": body_data.get("organization_id")
         }), HTTP_201_CREATED
