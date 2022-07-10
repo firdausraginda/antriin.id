@@ -1,15 +1,17 @@
 from flask import Blueprint, request, jsonify
 from src.constants.http_status_code import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_404_NOT_FOUND
-from src.database import Organization, db
-
+from src.database import Organization, SuperAdmin, db
+from src.auth.auth_super_admin import auth
 
 organization = Blueprint("organization", __name__, url_prefix="/api/v1/organization")
 
 @organization.route("/", methods=["POST", "GET"])
+@auth.login_required
 def post_and_get_organization():
 
     if request.method == "GET":
-        org_result = Organization.query.all()
+        super_admin_result = SuperAdmin.query.filter_by(email=auth.current_user()).first()
+        org_result = Organization.query.filter_by(super_admin_id=super_admin_result.id).all()
 
         data = []
         for org in org_result:
@@ -26,12 +28,13 @@ def post_and_get_organization():
         }), HTTP_200_OK
            
     else:
+        super_admin_result = SuperAdmin.query.filter_by(email=auth.current_user()).first()
         body_data = request.get_json()
 
         org = Organization(
-            name=body_data.get("name"),
-            description=body_data.get("description"),
-            super_admin_id=body_data.get("super_admin_id")
+            name = body_data.get("name"),
+            description = body_data.get("description"),
+            super_admin_id = super_admin_result.id
         )
 
         db.session.add(org)
@@ -40,12 +43,14 @@ def post_and_get_organization():
         return jsonify({
             "name": body_data.get("name"),
             "description": body_data.get("description"),
-            "super_admin_id": body_data.get("super_admin_id")
+            "super_admin_id": super_admin_result.id
         }), HTTP_201_CREATED
 
 @organization.get("/<int:id>")
+@auth.login_required
 def get_organization(id):
-    org_result = Organization.query.filter_by(id=id).first()
+    super_admin_result = SuperAdmin.query.filter_by(email=auth.current_user()).first()
+    org_result = Organization.query.filter_by(id=id,super_admin_id=super_admin_result.id).first()
 
     if not org_result:
         return jsonify({
@@ -61,8 +66,10 @@ def get_organization(id):
     }), HTTP_200_OK
             
 @organization.delete("/<int:id>")
+@auth.login_required
 def delete_organization(id):
-    org_result = Organization.query.filter_by(id=id).first()
+    super_admin_result = SuperAdmin.query.filter_by(email=auth.current_user()).first()
+    org_result = Organization.query.filter_by(id=id,super_admin_id=super_admin_result.id).first()
 
     if not org_result:
         return jsonify({
@@ -76,8 +83,10 @@ def delete_organization(id):
 
 @organization.put("/<int:id>")
 @organization.patch("/<int:id>")
+@auth.login_required
 def edit_organization(id):
-    org_result = Organization.query.filter_by(id=id).first()
+    super_admin_result = SuperAdmin.query.filter_by(email=auth.current_user()).first()
+    org_result = Organization.query.filter_by(id=id,super_admin_id=super_admin_result.id).first()
 
     if not org_result:
         return jsonify({
@@ -88,12 +97,10 @@ def edit_organization(id):
 
     org_result.name = body_data.get("name")
     org_result.description = body_data.get("description")
-    org_result.super_admin_id = body_data.get("super_admin_id")
 
     db.session.commit()
 
     return jsonify({
         "name": body_data.get("name"),
         "description": body_data.get("description"),
-        "super_admin_id": body_data.get("super_admin_id")
     }), HTTP_200_OK
