@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from src.constants.http_status_code import HTTP_200_OK, HTTP_201_CREATED
+from src.constants.http_status_code import HTTP_200_OK, HTTP_201_CREATED, HTTP_404_NOT_FOUND, HTTP_204_NO_CONTENT
 from src.database import Admin, Organization, SuperAdmin, db
 from src.auth.auth_super_admin import auth
 
@@ -50,3 +50,61 @@ def post_and_get_admin():
             "password": body_data.get("password"),
             "organization_id": organization_result.id
         }), HTTP_201_CREATED
+
+@admin.get("/<int:id>")
+@auth.login_required
+def get_admin(id):
+    super_admin_result = Admin.query.filter_by(id=id).first()
+
+    if not super_admin_result:
+        return jsonify({
+            "message": "item not found!"
+        }), HTTP_404_NOT_FOUND
+    
+    return jsonify({
+        "id": super_admin_result.id,
+        "name": super_admin_result.name,
+        "email": super_admin_result.email,
+        "password": super_admin_result.password,
+        "created_at": super_admin_result.created_at
+    }), HTTP_200_OK
+            
+@admin.delete("/<int:id>")
+@auth.login_required
+def delete_admin(id):
+    super_admin_result = Admin.query.filter_by(id=id).first()
+
+    if not super_admin_result:
+        return jsonify({
+            "message": "item not found!"
+        }), HTTP_404_NOT_FOUND
+    
+    db.session.delete(super_admin_result)
+    db.session.commit()
+
+    return ({}), HTTP_204_NO_CONTENT
+
+@admin.put("/<int:id>")
+@admin.patch("/<int:id>")
+@auth.login_required
+def edit_admin(id):
+    super_admin_result = Admin.query.filter_by(id=id).first()
+
+    if not super_admin_result:
+        return jsonify({
+            "message": "item not found!"
+        }), HTTP_404_NOT_FOUND
+    
+    body_data = request.get_json()
+
+    super_admin_result.name = body_data.get("name")
+    super_admin_result.email = body_data.get("email")
+    super_admin_result.password = body_data.get("password")
+
+    db.session.commit()
+
+    return jsonify({
+        "name": body_data.get("name"),
+        "email": body_data.get("email"),
+        "password": body_data.get("password")
+    }), HTTP_200_OK
