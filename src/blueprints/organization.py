@@ -39,8 +39,14 @@ def post_and_get_organization():
             super_admin_id = super_admin_result.id
         )
 
-        db.session.add(org)
-        db.session.commit()
+        try:
+            db.session.add(org)
+            db.session.commit()
+        except:
+            db.session.rollback()
+            raise
+        # finally:
+        #     db.session.close() # close session in this route will trigger error
         
         return jsonify({
             "name": body_data.get("name"),
@@ -78,8 +84,14 @@ def delete_organization(id):
             "message": "item not found!"
         }), HTTP_404_NOT_FOUND
     
-    db.session.delete(org_result)
-    db.session.commit()
+    try:
+        db.session.delete(org_result)
+        db.session.commit()
+    except:
+        db.session.rollback()
+        raise
+    finally:
+        db.session.close()
 
     return ({}), HTTP_204_NO_CONTENT
 
@@ -100,7 +112,13 @@ def edit_organization(id):
     org_result.name = body_data.get("name")
     org_result.description = body_data.get("description")
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
+        raise
+    finally:
+        db.session.close()
 
     return jsonify({
         "name": body_data.get("name"),
