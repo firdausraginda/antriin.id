@@ -11,7 +11,7 @@ class SuperAdmin(db.Model):
     name = db.Column(db.String, nullable=False)
     email = db.Column(db.String, nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.now())
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     organization = db.relationship('Organization', backref='super_admin', lazy=True, uselist=False)
 
@@ -22,7 +22,7 @@ class Organization(db.Model):
     __tablename__ = "organization"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.now())
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
     description = db.Column(db.String, nullable=True)
     super_admin_id = db.Column(db.Integer, db.ForeignKey('super_admin.id'), nullable=False, unique=True)
 
@@ -37,7 +37,7 @@ class Admin(db.Model):
     name = db.Column(db.String, nullable=False)
     email = db.Column(db.String, nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.now())
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
     organization_id = db.Column(db.Integer, db.ForeignKey('organization.id'), nullable=False)
 
     queues = db.relationship('Queue', backref='admin', lazy=True)
@@ -50,7 +50,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     email = db.Column(db.String, nullable=False, unique=True)
-    created_at = db.Column(db.DateTime, default=datetime.now())
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     queues_users = db.relationship('QueueUser', backref='user', lazy=True)
 
@@ -61,8 +61,8 @@ class QueueUser(db.Model):
     __tablename__ = "queue_user"
     id = db.Column(db.Integer, primary_key=True)
     status = db.Column(Enum("in_queue", "done", validate_strings=True), nullable=False, default="in_queque")
-    created_at = db.Column(db.DateTime, default=datetime.now())
-    updated_at = db.Column(db.DateTime, onupdate=datetime.now())
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
     queue_id = db.Column(db.Integer, db.ForeignKey('queue.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
@@ -73,8 +73,8 @@ class Queue(db.Model):
     __tablename__ = "queue"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.now())
-    updated_at = db.Column(db.DateTime, onupdate=datetime.now())
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
     description = db.Column(db.String, nullable=True)
     status = db.Column(Enum("active", "hold", "off", validate_strings=True), nullable=False, default="off")
     short_url = db.Column(db.String, nullable=False)
