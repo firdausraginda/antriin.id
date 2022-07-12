@@ -11,9 +11,10 @@ admin = Blueprint("admin", __name__, url_prefix="/api/v1/admin")
 def post_and_get_admin():
     super_admin_result = SuperAdmin.query.filter_by(email=auth.current_user()).first()
     organization_result = Organization.query.filter_by(super_admin_id=super_admin_result.id).first()
-    admin_result = Admin.query.filter_by(organization_id=organization_result.id).all()
 
     if request.method == "GET":
+
+        admin_result = Admin.query.filter_by(organization_id=organization_result.id).all()
 
         data = []
         for admin in admin_result:
