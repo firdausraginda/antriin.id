@@ -45,8 +45,6 @@ def post_and_get_organization():
         except:
             db.session.rollback()
             raise
-        # finally:
-        #     db.session.close() # close session in this route will trigger error
         
         return jsonify({
             "name": body_data.get("name"),
