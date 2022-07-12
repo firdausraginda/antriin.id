@@ -41,8 +41,12 @@ def post_and_get_admin():
             organization_id = organization_result.id
         )
 
-        db.session.add(admin)
-        db.session.commit()
+        try:
+            db.session.add(admin)
+            db.session.commit()
+        except:
+            db.session.rollback()
+            raise
         
         return jsonify({
             "name": body_data.get("name"),
@@ -83,8 +87,14 @@ def delete_admin(id):
             "message": "item not found!"
         }), HTTP_404_NOT_FOUND
     
-    db.session.delete(admin_result)
-    db.session.commit()
+    try:
+        db.session.delete(admin_result)
+        db.session.commit()
+    except:
+        db.session.rollback()
+        raise
+    finally:
+        db.session.close()
 
     return ({}), HTTP_204_NO_CONTENT
 
@@ -106,7 +116,13 @@ def edit_admin(id):
     admin_result.email = body_data.get("email")
     admin_result.password = body_data.get("password")
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
+        raise
+    finally:
+        db.session.close()
 
     return jsonify({
         "name": body_data.get("name"),
