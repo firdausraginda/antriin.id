@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Enum
 from datetime import datetime
-import random, string, enum
+import random, string
 
 db = SQLAlchemy()
 
@@ -56,14 +57,10 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % self.name
 
-class QueueUserStatus(enum.Enum):
-    in_queue = "in_queue"
-    done = "done"
-
 class QueueUser(db.Model):
     __tablename__ = "queue_user"
     id = db.Column(db.Integer, primary_key=True)
-    status = db.Column(db.Enum(QueueUserStatus), nullable=False, default="in_queque")
+    status = db.Column(Enum("in_queue", "done", validate_strings=True), nullable=False, default="in_queque")
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
     queue_id = db.Column(db.Integer, db.ForeignKey('queue.id'), nullable=False)
@@ -72,11 +69,6 @@ class QueueUser(db.Model):
     def __repr__(self):
         return '<QueueUser %r>' % self.queue_id
 
-class QueueStatus(enum.Enum):
-    active = "active"
-    hold = "hold"
-    off = "off"
-
 class Queue(db.Model):
     __tablename__ = "queue"
     id = db.Column(db.Integer, primary_key=True)
@@ -84,7 +76,7 @@ class Queue(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
     description = db.Column(db.String, nullable=True)
-    status = db.Column(db.Enum(QueueStatus), nullable=False, default="off")
+    status = db.Column(Enum("active", "hold", "off", validate_strings=True), nullable=False, default="off")
     short_url = db.Column(db.String, nullable=False)
     admin_id = db.Column(db.Integer, db.ForeignKey('admin.id'), nullable=False)
 

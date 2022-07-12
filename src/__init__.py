@@ -4,6 +4,7 @@ from src.database import db
 from src.blueprints.organization import organization
 from src.blueprints.admin import admin
 from src.blueprints.super_admin import super_admin
+from src.blueprints.queue import queue
 
 
 def create_app(test_config=None):
@@ -32,5 +33,6 @@ def create_app(test_config=None):
     app.register_blueprint(organization)
     app.register_blueprint(admin)
     app.register_blueprint(super_admin)
+    app.register_blueprint(queue)
     
     return app
