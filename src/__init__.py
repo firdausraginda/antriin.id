@@ -1,9 +1,9 @@
 from flask import Flask, jsonify
 import os
 from src.database import db
-from src.endpoint_organization import organization
-from src.endpoint_admin import admin
-from src.endpoint_super_admin import super_admin
+from src.blueprints.organization import organization
+from src.blueprints.admin import admin
+from src.blueprints.super_admin import super_admin
 
 
 def create_app(test_config=None):

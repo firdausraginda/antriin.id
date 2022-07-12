@@ -9,12 +9,11 @@ admin = Blueprint("admin", __name__, url_prefix="/api/v1/admin")
 @admin.route("/", methods=["POST", "GET"])
 @auth.login_required
 def post_and_get_admin():
-
     super_admin_result = SuperAdmin.query.filter_by(email=auth.current_user()).first()
     organization_result = Organization.query.filter_by(super_admin_id=super_admin_result.id).first()
+    admin_result = Admin.query.filter_by(organization_id=organization_result.id).all()
 
     if request.method == "GET":
-        admin_result = Admin.query.filter_by(organization_id=organization_result.id).all()
 
         data = []
         for admin in admin_result:
@@ -54,32 +53,36 @@ def post_and_get_admin():
 @admin.get("/<int:id>")
 @auth.login_required
 def get_admin(id):
-    super_admin_result = Admin.query.filter_by(id=id).first()
+    super_admin_result = SuperAdmin.query.filter_by(email=auth.current_user()).first()
+    organization_result = Organization.query.filter_by(super_admin_id=super_admin_result.id).first()
+    admin_result = Admin.query.filter_by(id=id,organization_id=organization_result.id).first()
 
-    if not super_admin_result:
+    if not admin_result:
         return jsonify({
             "message": "item not found!"
         }), HTTP_404_NOT_FOUND
     
     return jsonify({
-        "id": super_admin_result.id,
-        "name": super_admin_result.name,
-        "email": super_admin_result.email,
-        "password": super_admin_result.password,
-        "created_at": super_admin_result.created_at
+        "id": admin_result.id,
+        "name": admin_result.name,
+        "email": admin_result.email,
+        "password": admin_result.password,
+        "created_at": admin_result.created_at
     }), HTTP_200_OK
             
 @admin.delete("/<int:id>")
 @auth.login_required
 def delete_admin(id):
-    super_admin_result = Admin.query.filter_by(id=id).first()
+    super_admin_result = SuperAdmin.query.filter_by(email=auth.current_user()).first()
+    organization_result = Organization.query.filter_by(super_admin_id=super_admin_result.id).first()
+    admin_result = Admin.query.filter_by(id=id,organization_id=organization_result.id).first()
 
-    if not super_admin_result:
+    if not admin_result:
         return jsonify({
             "message": "item not found!"
         }), HTTP_404_NOT_FOUND
     
-    db.session.delete(super_admin_result)
+    db.session.delete(admin_result)
     db.session.commit()
 
     return ({}), HTTP_204_NO_CONTENT
@@ -88,18 +91,19 @@ def delete_admin(id):
 @admin.patch("/<int:id>")
 @auth.login_required
 def edit_admin(id):
-    super_admin_result = Admin.query.filter_by(id=id).first()
+    super_admin_result = SuperAdmin.query.filter_by(email=auth.current_user()).first()
+    organization_result = Organization.query.filter_by(super_admin_id=super_admin_result.id).first()
+    admin_result = Admin.query.filter_by(id=id,organization_id=organization_result.id).first()
 
-    if not super_admin_result:
+    if not admin_result:
         return jsonify({
             "message": "item not found!"
         }), HTTP_404_NOT_FOUND
     
     body_data = request.get_json()
-
-    super_admin_result.name = body_data.get("name")
-    super_admin_result.email = body_data.get("email")
-    super_admin_result.password = body_data.get("password")
+    admin_result.name = body_data.get("name")
+    admin_result.email = body_data.get("email")
+    admin_result.password = body_data.get("password")
 
     db.session.commit()
 

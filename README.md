@@ -58,6 +58,13 @@ pip3 install Flask-SQLAlchemy
 pip3 install Flask-HTTPAuth
 ```
 
+### Config File
+
+* `.env` file
+```
+export SECRET_KEY="dev"
+```
+
 ## Note
 
 ### [Application Factory](https://flask.palletsprojects.com/en/2.1.x/tutorial/factory/)
