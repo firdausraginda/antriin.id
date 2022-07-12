@@ -34,8 +34,14 @@ def post_and_get_super_admin():
             password = body_data.get("password")
         )
 
-        db.session.add(super_admin)
-        db.session.commit()
+        try:
+            db.session.add(super_admin)
+            db.session.commit()
+        except:
+            db.session.rollback()
+            raise
+        finally:
+            db.session.close()
         
         return jsonify({
             "name": body_data.get("name"),
@@ -69,8 +75,14 @@ def delete_super_admin(id):
             "message": "item not found!"
         }), HTTP_404_NOT_FOUND
     
-    db.session.delete(super_admin_result)
-    db.session.commit()
+    try:
+        db.session.delete(super_admin_result)
+        db.session.commit()
+    except:
+        db.session.rollback()
+        raise
+    finally:
+        db.session.close()
 
     return ({}), HTTP_204_NO_CONTENT
 
@@ -90,7 +102,13 @@ def edit_super_admin(id):
     super_admin_result.email = body_data.get("email")
     super_admin_result.password = body_data.get("password")
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
+        raise
+    finally:
+        db.session.close()
 
     return jsonify({
         "name": body_data.get("name"),
