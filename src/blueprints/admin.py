@@ -6,15 +6,30 @@ from src.auth.auth_super_admin import auth_super_admin
 
 admin = Blueprint("admin", __name__, url_prefix="/api/v1/admin")
 
-@admin.route("/", methods=["POST", "GET"])
+@admin.route("/", defaults={"id": None}, methods=["POST", "GET"])
+@admin.route("/<int:id>", methods=["POST", "GET"])
 @auth_super_admin.login_required
-def post_and_get_admin():
+def post_and_get_admin(id):
+
     super_admin_result = SuperAdmin.query.filter_by(email=auth_super_admin.current_user()).first()
     organization_result = Organization.query.filter_by(super_admin_id=super_admin_result.id).first()
 
+    if not super_admin_result or not organization_result:
+        return ({
+            "message": "item not found!"
+        }), HTTP_404_NOT_FOUND
+    
     if request.method == "GET":
 
-        admin_result = Admin.query.filter_by(organization_id=organization_result.id).all()
+        filters = (Admin.organization_id == organization_result.id,)
+        if id:
+            filters = filters + ((Admin.id == id),)
+        admin_result = Admin.query.filter(*filters).all()
+
+        if not admin_result:
+            return ({
+                "message": "item not found!"
+            }), HTTP_404_NOT_FOUND
 
         data = []
         for admin in admin_result:

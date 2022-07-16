@@ -11,7 +11,7 @@ queue = Blueprint("queue", __name__, url_prefix="/api/v1/queue")
 @queue.route("/", defaults={"id": None}, methods=["POST", "GET"])
 @queue.route("/<int:id>", methods=["POST", "GET"])
 @auth_admin.login_required
-def get_queue_by_auth_admin(id):
+def post_and_get_queue_by_auth_admin(id):
 
     admin_result = Admin.query.filter_by(email=auth_admin.current_user()).first()
 
