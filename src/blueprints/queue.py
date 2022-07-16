@@ -16,6 +16,7 @@ def post_and_get_queue_by_auth_admin(id):
     admin_result = Admin.query.filter_by(email=auth_admin.current_user()).first()
 
     if request.method == "GET":
+
         filters = (Queue.admin_id == admin_result.id,)
         if id:
             filters = filters + ((Queue.id == id),)
