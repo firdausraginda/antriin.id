@@ -1,16 +1,16 @@
 from flask import Blueprint, request, jsonify
 from src.constants.http_status_code import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_404_NOT_FOUND
 from src.database import Queue, Admin, db
-from src.auth.auth_admin import auth
+from src.auth.auth_admin import auth_admin
 
 
 queue = Blueprint("queue", __name__, url_prefix="/api/v1/queue")
 
 @queue.route("/", methods=["POST", "GET"])
-@auth.login_required
+@auth_admin.login_required
 def post_and_get_queue():
 
-    admin_result = Admin.query.filter_by(email=auth.current_user()).first()
+    admin_result = Admin.query.filter_by(email=auth_admin.current_user()).first()
 
     if request.method == "GET":
         
@@ -59,9 +59,9 @@ def post_and_get_queue():
         }), HTTP_201_CREATED
 
 @queue.get("/<int:id>")
-@auth.login_required
+@auth_admin.login_required
 def get_queue(id):
-    admin_result = Admin.query.filter_by(email=auth.current_user()).first()
+    admin_result = Admin.query.filter_by(email=auth_admin.current_user()).first()
     queue_result = Queue.query.filter_by(id=id,admin_id=admin_result.id).first()
 
     if not queue_result:
@@ -81,9 +81,9 @@ def get_queue(id):
     }), HTTP_200_OK
             
 @queue.delete("/<int:id>")
-@auth.login_required
+@auth_admin.login_required
 def delete_queue(id):
-    admin_result = Admin.query.filter_by(email=auth.current_user()).first()
+    admin_result = Admin.query.filter_by(email=auth_admin.current_user()).first()
     queue_result = Queue.query.filter_by(id=id,admin_id=admin_result.id).first()
 
     if not queue_result:
@@ -104,9 +104,9 @@ def delete_queue(id):
 
 @queue.put("/<int:id>")
 @queue.patch("/<int:id>")
-@auth.login_required
+@auth_admin.login_required
 def edit_queue(id):
-    admin_result = Admin.query.filter_by(email=auth.current_user()).first()
+    admin_result = Admin.query.filter_by(email=auth_admin.current_user()).first()
     queue_result = Queue.query.filter_by(id=id,admin_id=admin_result.id).first()
 
     if not queue_result:

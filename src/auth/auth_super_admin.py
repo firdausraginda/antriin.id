@@ -3,9 +3,9 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from src.database import SuperAdmin
 
 
-auth = HTTPBasicAuth()
+auth_super_admin = HTTPBasicAuth()
 
-@auth.verify_password
+@auth_super_admin.verify_password
 def verify_password_super_admin(email, password):
     super_admin_result = SuperAdmin.query.filter_by(email=email).first()
 

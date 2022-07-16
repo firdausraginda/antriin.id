@@ -1,16 +1,16 @@
 from flask import Blueprint, request, jsonify
 from src.constants.http_status_code import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_404_NOT_FOUND
 from src.database import Organization, SuperAdmin, db
-from src.auth.auth_super_admin import auth
+from src.auth.auth_super_admin import auth_super_admin
 
 
 organization = Blueprint("organization", __name__, url_prefix="/api/v1/organization")
 
 @organization.route("/", methods=["POST", "GET"])
-@auth.login_required
+@auth_super_admin.login_required
 def post_and_get_organization():
 
-    super_admin_result = SuperAdmin.query.filter_by(email=auth.current_user()).first()
+    super_admin_result = SuperAdmin.query.filter_by(email=auth_super_admin.current_user()).first()
 
     if request.method == "GET":
         
@@ -53,9 +53,9 @@ def post_and_get_organization():
         }), HTTP_201_CREATED
 
 @organization.get("/<int:id>")
-@auth.login_required
+@auth_super_admin.login_required
 def get_organization(id):
-    super_admin_result = SuperAdmin.query.filter_by(email=auth.current_user()).first()
+    super_admin_result = SuperAdmin.query.filter_by(email=auth_super_admin.current_user()).first()
     org_result = Organization.query.filter_by(id=id,super_admin_id=super_admin_result.id).first()
 
     if not org_result:
@@ -72,9 +72,9 @@ def get_organization(id):
     }), HTTP_200_OK
             
 @organization.delete("/<int:id>")
-@auth.login_required
+@auth_super_admin.login_required
 def delete_organization(id):
-    super_admin_result = SuperAdmin.query.filter_by(email=auth.current_user()).first()
+    super_admin_result = SuperAdmin.query.filter_by(email=auth_super_admin.current_user()).first()
     org_result = Organization.query.filter_by(id=id,super_admin_id=super_admin_result.id).first()
 
     if not org_result:
@@ -95,9 +95,9 @@ def delete_organization(id):
 
 @organization.put("/<int:id>")
 @organization.patch("/<int:id>")
-@auth.login_required
+@auth_super_admin.login_required
 def edit_organization(id):
-    super_admin_result = SuperAdmin.query.filter_by(email=auth.current_user()).first()
+    super_admin_result = SuperAdmin.query.filter_by(email=auth_super_admin.current_user()).first()
     org_result = Organization.query.filter_by(id=id,super_admin_id=super_admin_result.id).first()
 
     if not org_result:

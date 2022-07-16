@@ -1,15 +1,15 @@
 from flask import Blueprint, request, jsonify
 from src.constants.http_status_code import HTTP_200_OK, HTTP_201_CREATED, HTTP_404_NOT_FOUND, HTTP_204_NO_CONTENT
 from src.database import Admin, Organization, SuperAdmin, db
-from src.auth.auth_super_admin import auth
+from src.auth.auth_super_admin import auth_super_admin
 
 
 admin = Blueprint("admin", __name__, url_prefix="/api/v1/admin")
 
 @admin.route("/", methods=["POST", "GET"])
-@auth.login_required
+@auth_super_admin.login_required
 def post_and_get_admin():
-    super_admin_result = SuperAdmin.query.filter_by(email=auth.current_user()).first()
+    super_admin_result = SuperAdmin.query.filter_by(email=auth_super_admin.current_user()).first()
     organization_result = Organization.query.filter_by(super_admin_id=super_admin_result.id).first()
 
     if request.method == "GET":
@@ -56,9 +56,9 @@ def post_and_get_admin():
         }), HTTP_201_CREATED
 
 @admin.get("/<int:id>")
-@auth.login_required
+@auth_super_admin.login_required
 def get_admin(id):
-    super_admin_result = SuperAdmin.query.filter_by(email=auth.current_user()).first()
+    super_admin_result = SuperAdmin.query.filter_by(email=auth_super_admin.current_user()).first()
     organization_result = Organization.query.filter_by(super_admin_id=super_admin_result.id).first()
     admin_result = Admin.query.filter_by(id=id,organization_id=organization_result.id).first()
 
@@ -76,9 +76,9 @@ def get_admin(id):
     }), HTTP_200_OK
             
 @admin.delete("/<int:id>")
-@auth.login_required
+@auth_super_admin.login_required
 def delete_admin(id):
-    super_admin_result = SuperAdmin.query.filter_by(email=auth.current_user()).first()
+    super_admin_result = SuperAdmin.query.filter_by(email=auth_super_admin.current_user()).first()
     organization_result = Organization.query.filter_by(super_admin_id=super_admin_result.id).first()
     admin_result = Admin.query.filter_by(id=id,organization_id=organization_result.id).first()
 
@@ -100,9 +100,9 @@ def delete_admin(id):
 
 @admin.put("/<int:id>")
 @admin.patch("/<int:id>")
-@auth.login_required
+@auth_super_admin.login_required
 def edit_admin(id):
-    super_admin_result = SuperAdmin.query.filter_by(email=auth.current_user()).first()
+    super_admin_result = SuperAdmin.query.filter_by(email=auth_super_admin.current_user()).first()
     organization_result = Organization.query.filter_by(super_admin_id=super_admin_result.id).first()
     admin_result = Admin.query.filter_by(id=id,organization_id=organization_result.id).first()
 

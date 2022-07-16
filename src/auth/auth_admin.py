@@ -3,9 +3,9 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from src.database import Admin
 
 
-auth = HTTPBasicAuth()
+auth_admin = HTTPBasicAuth()
 
-@auth.verify_password
+@auth_admin.verify_password
 def verify_password_admin(email, password):
     admin_result = Admin.query.filter_by(email=email).first()
 

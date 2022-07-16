@@ -1,10 +1,8 @@
 import json
 from flask import Blueprint, request, jsonify
 from src.constants.http_status_code import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_404_NOT_FOUND
-from src.database import Queue, QueueUser, User, Admin, db
-from src.auth.auth_admin import auth as auth_admin
-from src.auth.auth_user import auth as auth_user
-
+from src.database import Queue, QueueUser, Admin, db
+from src.auth.auth_admin import auth_admin
 
 queue_user = Blueprint("queue_user", __name__, url_prefix="/api/v1/queue_user")
 
