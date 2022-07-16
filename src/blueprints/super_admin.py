@@ -5,11 +5,16 @@ from src.database import SuperAdmin, db
 
 super_admin = Blueprint("super_admin", __name__, url_prefix="/api/v1/super_admin")
 
-@super_admin.route("/", methods=["POST", "GET"])
-def post_and_get_super_admin():
+@super_admin.route("/", defaults={"id": None}, methods=["POST", "GET"])
+@super_admin.route("/<int:id>", methods=["POST", "GET"])
+def post_and_get_super_admin(id):
 
     if request.method == "GET":
-        super_admin_result = SuperAdmin.query.all()
+
+        filters = ()
+        if id:
+            filters = filters + ((SuperAdmin.id == id),)
+        super_admin_result = SuperAdmin.query.filter(*filters).all()
 
         data = []
         for super_admin in super_admin_result:
