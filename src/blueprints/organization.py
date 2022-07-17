@@ -6,15 +6,24 @@ from src.auth.auth_super_admin import auth_super_admin
 
 organization = Blueprint("organization", __name__, url_prefix="/api/v1/organization")
 
-@organization.route("/", methods=["POST", "GET"])
+@organization.route("/", defaults={"id": None}, methods=["POST", "GET"])
+@organization.route("/<int:id>", methods=["POST", "GET"])
 @auth_super_admin.login_required
-def post_and_get_organization():
+def post_and_get_organization(id):
 
     super_admin_result = SuperAdmin.query.filter_by(email=auth_super_admin.current_user()).first()
 
     if request.method == "GET":
         
-        org_result = Organization.query.filter_by(super_admin_id=super_admin_result.id).all()
+        filters = (Organization.super_admin_id == super_admin_result.id,)
+        if id:
+            filters = filters + ((Organization.id == id),)
+        org_result = Organization.query.filter(*filters).all()
+
+        if not org_result:
+            return ({
+                "message": "item not found!"
+            }), HTTP_404_NOT_FOUND
 
         data = []
         for org in org_result:
@@ -51,25 +60,6 @@ def post_and_get_organization():
             "description": body_data.get("description"),
             "super_admin_id": super_admin_result.id
         }), HTTP_201_CREATED
-
-@organization.get("/<int:id>")
-@auth_super_admin.login_required
-def get_organization(id):
-    super_admin_result = SuperAdmin.query.filter_by(email=auth_super_admin.current_user()).first()
-    org_result = Organization.query.filter_by(id=id,super_admin_id=super_admin_result.id).first()
-
-    if not org_result:
-        return jsonify({
-            "message": "item not found!"
-        }), HTTP_404_NOT_FOUND
-    
-    return jsonify({
-        "id": org_result.id,
-        "name": org_result.name,
-        "created_at": org_result.created_at,
-        "description": org_result.description,
-        "super_admin_id": org_result.super_admin_id
-    }), HTTP_200_OK
             
 @organization.delete("/<int:id>")
 @auth_super_admin.login_required
