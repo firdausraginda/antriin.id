@@ -61,7 +61,7 @@ class User(db.Model):
 class QueueUser(db.Model):
     __tablename__ = "queue_user"
     id = db.Column(db.Integer, primary_key=True)
-    status = db.Column(Enum("in_queue", "done", validate_strings=True), nullable=False, default="in_queque")
+    status = db.Column(Enum("in_queue", "done", validate_strings=True), nullable=False, default="in_queue")
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
     queue_id = db.Column(db.Integer, db.ForeignKey('queue.id'), nullable=False)
