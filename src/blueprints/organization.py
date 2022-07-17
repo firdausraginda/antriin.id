@@ -21,7 +21,7 @@ def post_and_get_organization(id):
         org_result = Organization.query.filter(*filters).all()
 
         if not org_result:
-            return ({
+            return jsonify({
                 "message": "item not found!"
             }), HTTP_404_NOT_FOUND
 

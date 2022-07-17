@@ -15,7 +15,7 @@ def post_and_get_admin(id):
     organization_result = Organization.query.filter_by(super_admin_id=super_admin_result.id).first()
 
     if not super_admin_result or not organization_result:
-        return ({
+        return jsonify({
             "message": "item not found!"
         }), HTTP_404_NOT_FOUND
     
@@ -27,7 +27,7 @@ def post_and_get_admin(id):
         admin_result = Admin.query.filter(*filters).all()
 
         if not admin_result:
-            return ({
+            return jsonify({
                 "message": "item not found!"
             }), HTTP_404_NOT_FOUND
 
