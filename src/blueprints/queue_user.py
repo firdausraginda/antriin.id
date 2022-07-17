@@ -1,8 +1,9 @@
 import json
 from flask import Blueprint, request, jsonify
-from src.constants.http_status_code import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_404_NOT_FOUND
+from src.constants.http_status_code import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_404_NOT_FOUND, HTTP_302_FOUND
 from src.database import Queue, QueueUser, Admin, User, db
 from src.auth.auth_admin import auth_admin
+from src.auth.auth_user import auth_user
 
 queue_user = Blueprint("queue_user", __name__, url_prefix="/api/v1/queue_user")
 
@@ -71,6 +72,40 @@ def post_and_get_queue_user_by_auth_admin(id):
             "queue_id": body_data.get("queue_id"),
             "user_id": body_data.get("user_id")
         }), HTTP_201_CREATED
+
+@queue_user.post("/join_queue/<int:id>")
+@auth_user.login_required
+def post_queue_user_by_auth_user(id):
+
+    queue_result = Queue.query.filter_by(id=id).first()
+    user_result = User.query.filter_by(email=auth_user.current_user()).first()
+    queue_user_result = QueueUser.query.filter_by(queue_id=id,user_id=user_result.id).first()
+    
+    if not user_result or not queue_result:
+        return jsonify({
+            "message": "queue or user not found!"
+        }), HTTP_404_NOT_FOUND
+    elif queue_user_result:
+        return jsonify({
+            "message": "user already join this queue!"
+        }), HTTP_302_FOUND
+
+    queue_user = QueueUser(
+        queue_id = id,
+        user_id = user_result.id
+    )
+
+    try:
+        db.session.add(queue_user)
+        db.session.commit()
+    except:
+        db.session.rollback()
+        raise
+    
+    return jsonify({
+        "queue_id": id,
+        "user_id": user_result.id
+    }), HTTP_201_CREATED
 
 @queue_user.delete("/<int:id>")
 @auth_admin.login_required
