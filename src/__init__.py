@@ -6,6 +6,7 @@ from src.blueprints.admin import admin
 from src.blueprints.super_admin import super_admin
 from src.blueprints.queue import queue
 from src.blueprints.queue_user import queue_user
+from src.blueprints.user import user
 
 
 def create_app(test_config=None):
@@ -36,5 +37,6 @@ def create_app(test_config=None):
     app.register_blueprint(super_admin)
     app.register_blueprint(queue)
     app.register_blueprint(queue_user)
+    app.register_blueprint(user)
     
     return app

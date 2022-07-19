@@ -1,123 +1,157 @@
-# from flask import Blueprint, request, jsonify
-# from src.constants.http_status_code import HTTP_200_OK, HTTP_201_CREATED, HTTP_404_NOT_FOUND, HTTP_204_NO_CONTENT
-# from src.database import Admin, User, Queue, QueueUser, db
-# from auth.auth_admin import auth
+from flask import Blueprint, request, jsonify
+from src.constants.http_status_code import HTTP_200_OK, HTTP_201_CREATED, HTTP_404_NOT_FOUND, HTTP_204_NO_CONTENT
+from src.database import Admin, User, Queue, QueueUser, db
+from src.auth.auth_admin import auth_admin
+from src.auth.auth_user import auth_user
 
 
-# user = Blueprint("user", __name__, url_prefix="/api/v1/user")
+user = Blueprint("user", __name__, url_prefix="/api/v1/user")
 
-# @user.route("/", methods=["POST", "GET"])
-# def post_and_get_user():
+@user.route("/", defaults={"id": None}, methods=["POST", "GET"])
+@user.route("/<int:id>", methods=["POST", "GET"])
+@auth_admin.login_required
+def post_and_get_user_by_auth_admin(id):
 
-#     if request.method == "GET":
+    admin_result = Admin.query.filter_by(email=auth_admin.current_user()).first()
 
-#         user_result = User.query.all()
+    if request.method == "GET":
 
-#         data = []
-#         for user in user_result:
-#             data.append({
-#                 "id": user.id,
-#                 "name": user.name,
-#                 "email": user.email,
-#                 "password": user.password,
-#                 "created_at": user.created_at
-#             })
+        queue_result = Queue.query.filter_by(admin_id=admin_result.id).all()
+        queue_user_result = QueueUser.query.filter(QueueUser.queue_id.in_([queue.id for queue in queue_result])).all()
+        filters = (User.id.in_([queue_user.user_id for queue_user in queue_user_result]),)
+        if id:
+            filters = filters + ((User.id == id),)
+        user_result = User.query.filter(*filters).all()
+
+        if not user_result or not queue_user_result:
+            return jsonify({
+                "message": "item not found!"
+            }), HTTP_404_NOT_FOUND
+
+        data = []
+        for user in user_result:
+            data.append({
+                "id": user.id,
+                "name": user.name,
+                "email": user.email,
+                "password": user.password,
+                "created_at": user.created_at
+            })
         
-#         return jsonify({
-#             "data": data
-#         }), HTTP_200_OK
+        return jsonify({
+            "data": data
+        }), HTTP_200_OK
            
-#     else:
-#         body_data = request.get_json()
+    else:
+        body_data = request.get_json()
 
-#         user = User(
-#             name = body_data.get("name"),
-#             email = body_data.get("email"),
-#             password = body_data.get("password")
-#         )
+        user = User(
+            name = body_data.get("name"),
+            email = body_data.get("email"),
+            password = body_data.get("password")
+        )
 
-#         try:
-#             db.session.add(user)
-#             db.session.commit()
-#         except:
-#             db.session.rollback()
-#             raise
+        try:
+            db.session.add(user)
+            db.session.commit()
+        except:
+            db.session.rollback()
+            raise
         
-#         return jsonify({
-#             "name": body_data.get("name"),
-#             "email": body_data.get("email"),
-#             "password": body_data.get("password")
-#         }), HTTP_201_CREATED
+        return jsonify({
+            "name": body_data.get("name"),
+            "email": body_data.get("email"),
+            "password": body_data.get("password")
+        }), HTTP_201_CREATED
 
-# @user.get("/<int:id>")
-# def get_admin(id):
+@user.get("/profile")
+@auth_user.login_required
+def get_user_by_auth_user():
 
-#     user_result = User.query.filter_by(id=id).first()
+    user_result = User.query.filter_by(email=auth_user.current_user()).first()
 
-#     if not user_result:
-#         return jsonify({
-#             "message": "item not found!"
-#         }), HTTP_404_NOT_FOUND
+    return jsonify({
+        "id": user_result.id,
+        "name": user_result.name,
+        "email": user_result.email,
+        "password": user_result.password,
+        "created_at": user_result.created_at
+    }), HTTP_200_OK
+
+@user.post("/signup")
+def post_user():
+
+    body_data = request.get_json()
+
+    user = User(
+        name = body_data.get("name"),
+        email = body_data.get("email"),
+        password = body_data.get("password")
+    )
+
+    try:
+        db.session.add(user)
+        db.session.commit()
+    except:
+        db.session.rollback()
+        raise
     
-#     return jsonify({
-#         "id": user_result.id,
-#         "name": user_result.name,
-#         "email": user_result.email,
-#         "password": user_result.password,
-#         "created_at": user_result.created_at
-#     }), HTTP_200_OK
+    return jsonify({
+        "name": body_data.get("name"),
+        "email": body_data.get("email"),
+            "password": body_data.get("password")
+        }), HTTP_201_CREATED
 
-# @user.delete("/<int:id>")
-# @auth.login_required
-# def delete_admin(id):
-#     admin_result = Admin.query.filter_by(email=auth.current_user()).first()
-#     queue_result = Queue.query.filter_by(admin_id=admin_result.id).first()
-#     queue_user_result = QueueUser.query.filter_by(queue_id=queue_result.id,user_id=id).all()
 
-#     if not queue_user_result:
-#         return jsonify({
-#             "message": "item not found!"
-#         }), HTTP_404_NOT_FOUND
+@user.delete("/profile")
+@auth_user.login_required
+def delete_admin():
     
-#     try:
-#         db.session.delete(admin_result)
-#         db.session.commit()
-#     except:
-#         db.session.rollback()
-#         raise
-#     finally:
-#         db.session.close()
+    user_result = User.query.filter_by(email=auth_admin.current_user()).first()
 
-#     return ({}), HTTP_204_NO_CONTENT
-
-# @admin.put("/<int:id>")
-# @admin.patch("/<int:id>")
-# @auth.login_required
-# def edit_admin(id):
-#     super_admin_result = SuperAdmin.query.filter_by(email=auth.current_user()).first()
-#     organization_result = Organization.query.filter_by(super_admin_id=super_admin_result.id).first()
-#     admin_result = Admin.query.filter_by(id=id,organization_id=organization_result.id).first()
-
-#     if not admin_result:
-#         return jsonify({
-#             "message": "item not found!"
-#         }), HTTP_404_NOT_FOUND
+    if not user_result:
+        return jsonify({
+            "message": "item not found!"
+        }), HTTP_404_NOT_FOUND
     
-#     body_data = request.get_json()
-#     admin_result.name = body_data.get("name")
-#     admin_result.email = body_data.get("email")
-#     admin_result.password = body_data.get("password")
+    try:
+        db.session.delete(user_result)
+        db.session.commit()
+    except:
+        db.session.rollback()
+        raise
+    finally:
+        db.session.close()
 
-#     try:
-#         db.session.commit()
-#     except:
-#         db.session.rollback()
-#         raise
-#     finally:
-#         db.session.close()
+    return ({}), HTTP_204_NO_CONTENT
 
-#     return jsonify({
-#         "name": body_data.get("name"),
-#         "email": body_data.get("email"),
-#         "password": body_data.get("password")
-#     }), HTTP_200_OK
+@user.put("/profile")
+@user.patch("/profile")
+@auth_user.login_required
+def edit_admin():
+    
+    user_result = User.query.filter_by(email=auth_user.current_user()).first()
+
+    if not user_result:
+        return jsonify({
+            "message": "item not found!"
+        }), HTTP_404_NOT_FOUND
+    
+    body_data = request.get_json()
+    user_result.name = body_data.get("name")
+    user_result.email = body_data.get("email")
+    user_result.password = body_data.get("password")
+
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
+        raise
+    finally:
+        db.session.close()
+
+    return jsonify({
+        "name": body_data.get("name"),
+        "email": body_data.get("email"),
+        "password": body_data.get("password")
+    }), HTTP_200_OK
