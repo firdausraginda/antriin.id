@@ -65,6 +65,17 @@ pip3 install Flask-HTTPAuth
 export SECRET_KEY="dev"
 ```
 
+### Other Dependencies
+
+* install flasgger for better documentation
+```sh
+pip3 install -U setuptools
+```
+
+```sh
+pip3 install flasgger
+```
+
 ## Note
 
 ### [Application Factory](https://flask.palletsprojects.com/en/2.1.x/tutorial/factory/)
