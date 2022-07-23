@@ -69,26 +69,6 @@ def post_and_get_admin(id):
             "password": body_data.get("password"),
             "organization_id": organization_result.id
         }), HTTP_201_CREATED
-
-@admin.get("/<int:id>")
-@auth_super_admin.login_required
-def get_admin(id):
-    super_admin_result = SuperAdmin.query.filter_by(email=auth_super_admin.current_user()).first()
-    organization_result = Organization.query.filter_by(super_admin_id=super_admin_result.id).first()
-    admin_result = Admin.query.filter_by(id=id,organization_id=organization_result.id).first()
-
-    if not admin_result:
-        return jsonify({
-            "message": "item not found!"
-        }), HTTP_404_NOT_FOUND
-    
-    return jsonify({
-        "id": admin_result.id,
-        "name": admin_result.name,
-        "email": admin_result.email,
-        "password": admin_result.password,
-        "created_at": admin_result.created_at
-    }), HTTP_200_OK
             
 @admin.delete("/<int:id>")
 @auth_super_admin.login_required

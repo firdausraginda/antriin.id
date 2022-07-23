@@ -75,6 +75,8 @@ pip3 install -U setuptools
 ```sh
 pip3 install flasgger
 ```
+refer [here](https://swagger.io/specification/v2) to set `swagger.py`
+
 
 ## Note
 
