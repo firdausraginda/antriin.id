@@ -12,10 +12,10 @@ template = {
     ],
     "securityDefinitions": {
         "BasicAuth": {
-            "type": "apiKey",
+            "type": "basic",
             "name": "Authorization",
             "in": "header",
-            "description": "Basic auth, using username & password. Example: \"Authorization: {username} & {password}\""
+            "description": "Basic Authorization header using username & password"
         }
     },
 }
