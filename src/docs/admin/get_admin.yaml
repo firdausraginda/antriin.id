@@ -1,0 +1,8 @@
+tags:
+  - Admin
+
+responses:
+  200:
+    description: Successfully get data
+  404:
+    description: admin ID not found

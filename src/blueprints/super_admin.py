@@ -64,7 +64,7 @@ def post_and_get_super_admin(id):
         }), HTTP_201_CREATED
             
 @super_admin.delete("/<int:id>")
-@swag_from("../docs/super_admin/delete_by_id.yaml")
+@swag_from("../docs/super_admin/delete_super_admin_by_id.yaml")
 def delete_super_admin(id):
     super_admin_result = SuperAdmin.query.filter_by(id=id).first()
 

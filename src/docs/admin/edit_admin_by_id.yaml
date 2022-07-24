@@ -1,0 +1,36 @@
+tags:
+  - Admin
+parameters:
+  - name: body
+    description: the body should contain name, email & password
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "name"
+        - "email"
+        - "password"
+      properties:
+        name:
+          type: "string"
+          example: "user"
+        email:
+          type: "email"
+          example: "user@gmail.com"
+        password:
+          type: "string"
+          format: password
+          example: "********"
+  - name: id
+    description: the path should contain admin ID
+    in: path
+    required: true
+    schema:
+      type: integer
+
+responses:
+  201:
+    description: Successfully insert data
+  404:
+    description: Admin ID not found
