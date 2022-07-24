@@ -4,6 +4,5 @@ tags:
 responses:
   200:
     description: Successfully get data
-
   404:
-    description: Super Admin ID not found
+    description: Super admin ID not found

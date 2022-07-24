@@ -22,7 +22,15 @@ parameters:
           type: "string"
           format: password
           example: "********"
+  - name: id
+    description: the path should contain super admin ID
+    in: path
+    required: true
+    schema:
+      type: integer
 
 responses:
   201:
     description: Successfully insert data
+  404:
+    description: Super admin ID not found
