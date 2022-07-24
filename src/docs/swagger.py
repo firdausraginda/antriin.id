@@ -10,12 +10,12 @@ template = {
         "http",
         "https"
     ],
-        "securityDefinitions": {
-        "Bearer": {
+    "securityDefinitions": {
+        "BasicAuth": {
             "type": "apiKey",
             "name": "Authorization",
             "in": "header",
-            "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\""
+            "description": "Basic auth, using username & password. Example: \"Authorization: {username} & {password}\""
         }
     },
 }
@@ -32,5 +32,5 @@ swagger_config = {
     ],
     "static_url_path": "/flasgger_static",
     "swagger_ui": True,
-    "specs_route": "/"
+    "specs_route": "/api/docs"
 }

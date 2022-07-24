@@ -67,7 +67,14 @@ export SECRET_KEY="dev"
 
 ### Other Dependencies
 
-* install flasgger for better documentation
+* [flasgger](https://github.com/flasgger/flasgger)
+refer to these docs to set `swagger.py`:
+    * [initializing flasgger with default data](https://github.com/flasgger/flasgger#initializing-flasgger-with-default-data)
+    * [custom default configurations](https://github.com/flasgger/flasgger#customize-default-configurations)
+
+refer [here](https://github.com/flasgger/flasgger#using-external-yaml-files) to defin API docs in yaml file
+
+install flasgger for better documentation
 ```sh
 pip3 install -U setuptools
 ```
@@ -75,8 +82,6 @@ pip3 install -U setuptools
 ```sh
 pip3 install flasgger
 ```
-refer [here](https://swagger.io/specification/v2) to set `swagger.py`
-
 
 ## Note
 

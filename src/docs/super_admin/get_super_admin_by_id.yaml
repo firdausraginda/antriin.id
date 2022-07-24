@@ -1,0 +1,21 @@
+tags:
+  - Super Admin
+parameters:
+  - name: id
+    description: path should contain super admin ID
+    in: path
+    required: true
+    schema:
+      type: integer
+      required:
+        - "id"
+      properties:
+        id:
+          example: 1
+
+responses:
+  200:
+    description: Successfully get data
+
+  404:
+    description: Super Admin ID not found

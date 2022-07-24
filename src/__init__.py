@@ -7,7 +7,7 @@ from src.blueprints.super_admin import super_admin
 from src.blueprints.queue import queue
 from src.blueprints.queue_user import queue_user
 from src.blueprints.user import user
-from flasgger import Swagger, swag_from
+from flasgger import Swagger
 from src.docs.swagger import template, swagger_config
 
 

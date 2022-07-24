@@ -6,9 +6,11 @@ from flasgger import swag_from
 
 super_admin = Blueprint("super_admin", __name__, url_prefix="/api/v1/super_admin")
 
-@super_admin.route("/", defaults={"id": None}, methods=["POST", "GET"])
-@super_admin.route("/<int:id>", methods=["POST", "GET"])
-@swag_from("../docs/super_admin/post_and_get_super_admin.yaml")
+@super_admin.route("/", defaults={"id": None}, methods=["POST", "GET"], endpoint="without_id")
+@super_admin.route("/<int:id>", methods=["GET"], endpoint="with_id")
+@swag_from("../docs/super_admin/get_super_admin.yaml", endpoint="super_admin.without_id", methods=["GET"])
+@swag_from("../docs/super_admin/get_super_admin_by_id.yaml", endpoint="super_admin.with_id", methods=["GET"])
+@swag_from("../docs/super_admin/post_super_admin.yaml", endpoint="super_admin.without_id", methods=["POST"])
 def post_and_get_super_admin(id):
 
     if request.method == "GET":
