@@ -1,5 +1,10 @@
+Delete admin data by id
+---
+
 tags:
   - Admin
+security:
+  - BasicAuth: []
 parameters:
   - name: id
     description: path should contain admin ID

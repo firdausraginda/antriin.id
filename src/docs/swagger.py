@@ -13,8 +13,6 @@ template = {
     "securityDefinitions": {
         "BasicAuth": {
             "type": "basic",
-            "name": "Authorization",
-            "in": "header",
             "description": "Basic Authorization header using username & password"
         }
     },

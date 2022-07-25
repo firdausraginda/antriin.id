@@ -1,5 +1,10 @@
+Insert admin data
+---
+
 tags:
   - Admin
+security:
+  - BasicAuth: []
 parameters:
   - name: body
     description: the body should contain name, email & password

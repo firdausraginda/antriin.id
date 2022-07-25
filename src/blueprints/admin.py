@@ -76,6 +76,7 @@ def post_and_get_admin(id):
             
 @admin.delete("/<int:id>")
 @auth_super_admin.login_required
+@swag_from("../docs/admin/delete_admin_by_id.yaml")
 def delete_admin(id):
     super_admin_result = SuperAdmin.query.filter_by(email=auth_super_admin.current_user()).first()
     organization_result = Organization.query.filter_by(super_admin_id=super_admin_result.id).first()
@@ -98,8 +99,8 @@ def delete_admin(id):
     return ({}), HTTP_204_NO_CONTENT
 
 @admin.put("/<int:id>")
-@admin.patch("/<int:id>")
 @auth_super_admin.login_required
+@swag_from("../docs/admin/edit_admin_by_id.yaml")
 def edit_admin(id):
     super_admin_result = SuperAdmin.query.filter_by(email=auth_super_admin.current_user()).first()
     organization_result = Organization.query.filter_by(super_admin_id=super_admin_result.id).first()

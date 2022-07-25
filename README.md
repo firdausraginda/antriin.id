@@ -74,7 +74,7 @@ refer to these docs to set `swagger.py`:
 
 refer [here](https://github.com/flasgger/flasgger#using-external-yaml-files) to defin API docs in yaml file
 
-refer [here](https://swagger.io/docs/specification/2-0/authentication/basic-authentication/) to define authorization
+refer [here](https://swagger.io/docs/specification/2-0/authentication/) to define authorization
 
 install flasgger for better documentation
 ```sh

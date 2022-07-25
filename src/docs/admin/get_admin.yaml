@@ -1,6 +1,10 @@
+Get all admin data 
+---
+
 tags:
   - Admin
-
+security:
+  - BasicAuth: []
 responses:
   200:
     description: Successfully get data

@@ -1,5 +1,10 @@
+Edit admin data by id
+---
+
 tags:
   - Admin
+security:
+  - BasicAuth: []
 parameters:
   - name: body
     description: the body should contain name, email & password
