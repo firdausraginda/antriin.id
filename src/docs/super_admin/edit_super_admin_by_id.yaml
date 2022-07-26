@@ -30,7 +30,7 @@ parameters:
       type: integer
 
 responses:
-  201:
+  200:
     description: Successfully insert data
   404:
     description: Super admin ID not found
