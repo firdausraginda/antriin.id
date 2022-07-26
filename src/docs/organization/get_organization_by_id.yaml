@@ -1,0 +1,25 @@
+Get organization data by id
+---
+
+tags:
+  - Organization
+security:
+  - BasicAuth: []
+parameters:
+  - name: id
+    description: path should contain organization ID
+    in: path
+    required: true
+    schema:
+      type: integer
+      required:
+        - "id"
+      properties:
+        id:
+          example: 1
+
+responses:
+  200:
+    description: Successfully get data
+  404:
+    description: Organization ID not found
