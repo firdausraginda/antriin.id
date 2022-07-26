@@ -4,13 +4,17 @@ from src.constants.http_status_code import HTTP_200_OK, HTTP_201_CREATED, HTTP_2
 from src.database import Queue, Admin, QueueUser, User, db
 from src.auth.auth_admin import auth_admin
 from src.auth.auth_user import auth_user
+from flasgger import swag_from
 
 
 queue = Blueprint("queue", __name__, url_prefix="/api/v1/queue")
 
-@queue.route("/", defaults={"id": None}, methods=["POST", "GET"])
-@queue.route("/<int:id>", methods=["POST", "GET"])
+@queue.route("/", defaults={"id": None}, methods=["POST", "GET"], endpoint="without_id")
+@queue.route("/<int:id>", methods=["POST", "GET"], endpoint="with_id")
 @auth_admin.login_required
+@swag_from("../docs/queue/get_queue.yaml", endpoint="queue.without_id", methods=["GET"])
+@swag_from("../docs/queue/get_queue_by_id.yaml", endpoint="queue.with_id", methods=["GET"])
+@swag_from("../docs/queue/post_queue.yaml", endpoint="queue.without_id", methods=["POST"])
 def post_and_get_queue_by_auth_admin(id):
 
     admin_result = Admin.query.filter_by(email=auth_admin.current_user()).first()
@@ -51,7 +55,6 @@ def post_and_get_queue_by_auth_admin(id):
             name = body_data.get("name"),
             description = body_data.get("description"),
             status = body_data.get("status"),
-            short_url = body_data.get("short_url"),
             admin_id = admin_result.id
         )
 
@@ -95,6 +98,7 @@ def get_queue_by_auth_user():
 
 @queue.delete("/<int:id>")
 @auth_admin.login_required
+@swag_from("../docs/queue/delete_queue_by_id.yaml")
 def delete_queue(id):
     admin_result = Admin.query.filter_by(email=auth_admin.current_user()).first()
     queue_result = Queue.query.filter_by(id=id,admin_id=admin_result.id).first()
@@ -116,8 +120,8 @@ def delete_queue(id):
     return ({}), HTTP_204_NO_CONTENT
 
 @queue.put("/<int:id>")
-@queue.patch("/<int:id>")
 @auth_admin.login_required
+@swag_from("../docs/queue/edit_queue_by_id.yaml")
 def edit_queue(id):
     admin_result = Admin.query.filter_by(email=auth_admin.current_user()).first()
     queue_result = Queue.query.filter_by(id=id,admin_id=admin_result.id).first()

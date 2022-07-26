@@ -1,0 +1,12 @@
+Get all queue data 
+---
+
+tags:
+  - Queue
+security:
+  - BasicAuth: []
+responses:
+  200:
+    description: Successfully get data
+  404:
+    description: queue ID not found

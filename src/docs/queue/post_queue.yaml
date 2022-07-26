@@ -1,0 +1,32 @@
+Insert queue data
+---
+
+tags:
+  - Queue
+security:
+  - BasicAuth: []
+parameters:
+  - name: body
+    description: the body should contain name, description
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "name"
+        - "description"
+        - "status"
+      properties:
+        name:
+          type: "string"
+          example: "queue 1"
+        description:
+          type: "string"
+          example: "this is queue"
+        status:
+          type: "string"
+          example: "off"
+
+responses:
+  201:
+    description: Successfully insert data
