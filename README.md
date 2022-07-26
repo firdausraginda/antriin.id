@@ -69,3 +69,4 @@ export SECRET_KEY="dev"
 
 ### [Application Factory](https://flask.palletsprojects.com/en/2.1.x/tutorial/factory/)
 Instead of creating a Flask instance globally, better to create it inside a function. This function is known as the application factory. Any configuration, registration, and other setup the application needs will happen inside the function, then the application will be returned.
+
