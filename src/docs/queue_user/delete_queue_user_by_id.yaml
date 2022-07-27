@@ -1,0 +1,25 @@
+Delete queue user data by id using admin auth
+---
+
+tags:
+  - Queue User
+security:
+  - BasicAuth: []
+parameters:
+  - name: id
+    description: path should contain queue user ID
+    in: path
+    required: true
+    schema:
+      type: integer
+      required:
+        - "id"
+      properties:
+        id:
+          example: 1
+
+responses:
+  204:
+    description: Successfully delete data
+  404:
+    description: Queue or queue user ID not found

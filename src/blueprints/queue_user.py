@@ -4,12 +4,17 @@ from src.constants.http_status_code import HTTP_200_OK, HTTP_201_CREATED, HTTP_2
 from src.database import Queue, QueueUser, Admin, User, db
 from src.auth.auth_admin import auth_admin
 from src.auth.auth_user import auth_user
+from flasgger import swag_from
+
 
 queue_user = Blueprint("queue_user", __name__, url_prefix="/api/v1/queue_user")
 
-@queue_user.route("/", defaults={"id": None}, methods=["POST", "GET"])
-@queue_user.route("/<int:id>", methods=["POST", "GET"])
+@queue_user.route("/", defaults={"id": None}, methods=["POST", "GET"], endpoint="without_id")
+@queue_user.route("/<int:id>", methods=["POST", "GET"], endpoint="with_id")
 @auth_admin.login_required
+@swag_from("../docs/queue_user/get_queue_user.yaml", endpoint="queue_user.without_id", methods=["GET"])
+@swag_from("../docs/queue_user/get_queue_user_by_id.yaml", endpoint="queue_user.with_id", methods=["GET"])
+@swag_from("../docs/queue_user/post_queue_user_by_auth_admin.yaml", endpoint="queue_user.without_id", methods=["POST"])
 def post_and_get_queue_user_by_auth_admin(id):
 
     admin_result = Admin.query.filter_by(email=auth_admin.current_user()).first()
@@ -75,6 +80,7 @@ def post_and_get_queue_user_by_auth_admin(id):
 
 @queue_user.post("/join_queue/<int:id>")
 @auth_user.login_required
+@swag_from("../docs/queue_user/post_queue_user_by_auth_user.yaml")
 def post_queue_user_by_auth_user(id):
 
     queue_result = Queue.query.filter_by(id=id).first()
@@ -109,7 +115,8 @@ def post_queue_user_by_auth_user(id):
 
 @queue_user.delete("/<int:id>")
 @auth_admin.login_required
-def delete_queue(id):
+@swag_from("../docs/queue_user/delete_queue_user_by_id.yaml")
+def delete_queue_user(id):
     admin_result = Admin.query.filter_by(email=auth_admin.current_user()).first()
     queue_result = Queue.query.filter_by(admin_id=admin_result.id).all()
     queue_user_result = QueueUser.query.filter(QueueUser.queue_id.in_([queue.id for queue in queue_result]),QueueUser.id==id).first()
@@ -131,9 +138,9 @@ def delete_queue(id):
     return ({}), HTTP_204_NO_CONTENT
 
 @queue_user.put("/<int:id>")
-@queue_user.patch("/<int:id>")
 @auth_admin.login_required
-def edit_queue(id):
+@swag_from("../docs/queue_user/edit_queue_user_by_id.yaml")
+def edit_queue_user(id):
     admin_result = Admin.query.filter_by(email=auth_admin.current_user()).first()
     queue_result = Queue.query.filter_by(admin_id=admin_result.id).all()
     queue_user_result = QueueUser.query.filter(QueueUser.queue_id.in_([queue.id for queue in queue_result]),QueueUser.id==id).first()
