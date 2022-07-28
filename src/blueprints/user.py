@@ -3,13 +3,17 @@ from src.constants.http_status_code import HTTP_200_OK, HTTP_201_CREATED, HTTP_4
 from src.database import Admin, User, Queue, QueueUser, db
 from src.auth.auth_admin import auth_admin
 from src.auth.auth_user import auth_user
+from flasgger import swag_from
 
 
 user = Blueprint("user", __name__, url_prefix="/api/v1/user")
 
-@user.route("/", defaults={"id": None}, methods=["POST", "GET"])
-@user.route("/<int:id>", methods=["POST", "GET"])
+@user.route("/", defaults={"id": None}, methods=["POST", "GET"], endpoint="without_id")
+@user.route("/<int:id>", methods=["POST", "GET"], endpoint="with_id")
 @auth_admin.login_required
+@swag_from("../docs/user/get_user_using_auth_admin.yaml", endpoint="user.without_id", methods=["GET"])
+@swag_from("../docs/user/get_user_by_id_using_auth_admin.yaml", endpoint="user.with_id", methods=["GET"])
+@swag_from("../docs/user/post_user_using_auth_admin.yaml", endpoint="user.without_id", methods=["POST"])
 def post_and_get_user_by_auth_admin(id):
 
     admin_result = Admin.query.filter_by(email=auth_admin.current_user()).first()
@@ -66,6 +70,7 @@ def post_and_get_user_by_auth_admin(id):
 
 @user.get("/profile")
 @auth_user.login_required
+@swag_from("../docs/user/get_user_using_auth_user.yaml")
 def get_user_by_auth_user():
 
     user_result = User.query.filter_by(email=auth_user.current_user()).first()
@@ -79,6 +84,7 @@ def get_user_by_auth_user():
     }), HTTP_200_OK
 
 @user.post("/signup")
+@swag_from("../docs/user/post_user.yaml")
 def post_user():
 
     body_data = request.get_json()
@@ -105,6 +111,7 @@ def post_user():
 
 @user.delete("/profile")
 @auth_user.login_required
+@swag_from("../docs/user/delete_user_using_auth_user.yaml")
 def delete_admin():
     
     user_result = User.query.filter_by(email=auth_admin.current_user()).first()
@@ -126,8 +133,8 @@ def delete_admin():
     return ({}), HTTP_204_NO_CONTENT
 
 @user.put("/profile")
-@user.patch("/profile")
 @auth_user.login_required
+@swag_from("../docs/user/edit_user_using_auth_user.yaml")
 def edit_admin():
     
     user_result = User.query.filter_by(email=auth_user.current_user()).first()

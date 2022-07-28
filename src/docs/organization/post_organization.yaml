@@ -18,7 +18,7 @@ parameters:
       properties:
         name:
           type: "string"
-          example: "user"
+          example: "organization x"
         description:
           type: "string"
           example: "this is organization"

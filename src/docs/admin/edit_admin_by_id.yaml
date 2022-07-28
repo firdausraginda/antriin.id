@@ -19,10 +19,10 @@ parameters:
       properties:
         name:
           type: "string"
-          example: "user"
+          example: "admin"
         email:
           type: "email"
-          example: "user@gmail.com"
+          example: "admin@gmail.com"
         password:
           type: "string"
           format: password

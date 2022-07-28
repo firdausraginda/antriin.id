@@ -7,7 +7,7 @@ security:
   - BasicAuth: []
 parameters:
   - name: body
-    description: the body should contain name, description
+    description: the body should contain name, description, status
     in: body
     required: true
     schema:

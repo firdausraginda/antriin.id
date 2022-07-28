@@ -1,8 +1,13 @@
+Insert user data
+---
+
 tags:
-  - Super Admin
+  - User
+security:
+  - BasicAuth: []
 parameters:
   - name: body
-    description: the body should contain name, email & password
+    description: the body should contain name, email, password
     in: body
     required: true
     schema:
@@ -14,10 +19,10 @@ parameters:
       properties:
         name:
           type: "string"
-          example: "super_admin"
+          example: "user"
         email:
           type: "email"
-          example: "super_admin@gmail.com"
+          example: "user@gmail.com"
         password:
           type: "string"
           format: password

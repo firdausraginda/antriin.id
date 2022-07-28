@@ -1,8 +1,13 @@
+Edit user data by id
+---
+
 tags:
-  - Super Admin
+  - User
+security:
+  - BasicAuth: []
 parameters:
   - name: body
-    description: the body should contain name, email & password
+    description: the body should contain name, email, password
     in: body
     required: true
     schema:
@@ -14,16 +19,16 @@ parameters:
       properties:
         name:
           type: "string"
-          example: "super_admin"
+          example: "user"
         email:
           type: "email"
-          example: "super_admin@gmail.com"
+          example: "user@gmail.com"
         password:
           type: "string"
           format: password
           example: "********"
   - name: id
-    description: the path should contain super admin ID
+    description: the path should contain queue ID
     in: path
     required: true
     schema:
@@ -33,4 +38,4 @@ responses:
   200:
     description: Successfully insert data
   404:
-    description: Super admin ID not found
+    description: Queue ID not found
