@@ -1,4 +1,4 @@
-Insert queue user data using user auth
+Get queue user data by id using auth admin
 ---
 
 tags:
@@ -7,7 +7,7 @@ security:
   - BasicAuth: []
 parameters:
   - name: id
-    description: path should contain queue ID
+    description: path should contain queue user ID
     in: path
     required: true
     schema:
@@ -19,7 +19,7 @@ parameters:
           example: 1
 
 responses:
-  201:
-    description: Successfully insert data
+  200:
+    description: Successfully get data
   404:
-    description: Queue or user not found
+    description: Queue user ID not found
