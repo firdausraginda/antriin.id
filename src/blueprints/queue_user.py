@@ -1,4 +1,3 @@
-import json
 from flask import Blueprint, request, jsonify
 from src.constants.http_status_code import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_404_NOT_FOUND, HTTP_302_FOUND
 from src.database import Queue, QueueUser, Admin, User, db
