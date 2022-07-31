@@ -70,7 +70,7 @@ def post_and_get_user_by_auth_admin(id):
 
 @user.get("/profile")
 @auth_user.login_required
-@swag_from("../docs/user/get_user_using_auth_user.yaml")
+@swag_from("../docs/user/get_user_by_id_using_auth_user.yaml")
 def get_user_by_auth_user():
 
     user_result = User.query.filter_by(email=auth_user.current_user()).first()

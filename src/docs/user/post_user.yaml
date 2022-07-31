@@ -1,4 +1,4 @@
-Edit user data by id using auth user
+Insert user data
 ---
 
 tags:
@@ -27,15 +27,7 @@ parameters:
           type: "string"
           format: password
           example: "********"
-  - name: id
-    description: the path should contain queue ID
-    in: path
-    required: true
-    schema:
-      type: integer
 
 responses:
-  200:
+  201:
     description: Successfully insert data
-  404:
-    description: Queue ID not found
