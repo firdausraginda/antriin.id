@@ -1,4 +1,4 @@
-Delete queue data by id
+Get queue data by id using auth admin
 ---
 
 tags:
@@ -19,7 +19,7 @@ parameters:
           example: 1
 
 responses:
-  204:
-    description: Successfully delete data
+  200:
+    description: Successfully get data
   404:
     description: Queue ID not found
