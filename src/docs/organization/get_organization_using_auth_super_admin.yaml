@@ -1,0 +1,12 @@
+Get all organization data using auth super admin
+---
+
+tags:
+  - Organization
+security:
+  - BasicAuth: []
+responses:
+  200:
+    description: Successfully get data
+  404:
+    description: organization ID not found

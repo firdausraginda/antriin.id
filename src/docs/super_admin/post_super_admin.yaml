@@ -1,0 +1,31 @@
+Insert super admin data
+---
+
+tags:
+  - Super Admin
+parameters:
+  - name: body
+    description: the body should contain name, email & password
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "name"
+        - "email"
+        - "password"
+      properties:
+        name:
+          type: "string"
+          example: "super_admin"
+        email:
+          type: "email"
+          example: "super_admin@gmail.com"
+        password:
+          type: "string"
+          format: password
+          example: "********"
+
+responses:
+  201:
+    description: Successfully insert data

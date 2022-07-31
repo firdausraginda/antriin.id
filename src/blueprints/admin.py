@@ -2,13 +2,17 @@ from flask import Blueprint, request, jsonify
 from src.constants.http_status_code import HTTP_200_OK, HTTP_201_CREATED, HTTP_404_NOT_FOUND, HTTP_204_NO_CONTENT
 from src.database import Admin, Organization, SuperAdmin, db
 from src.auth.auth_super_admin import auth_super_admin
+from flasgger import swag_from
 
 
 admin = Blueprint("admin", __name__, url_prefix="/api/v1/admin")
 
-@admin.route("/", defaults={"id": None}, methods=["POST", "GET"])
-@admin.route("/<int:id>", methods=["POST", "GET"])
+@admin.route("/", defaults={"id": None}, methods=["POST", "GET"], endpoint="without_id")
+@admin.route("/<int:id>", methods=["POST", "GET"], endpoint="with_id")
 @auth_super_admin.login_required
+@swag_from("../docs/admin/get_admin_using_auth_super_admin.yaml", endpoint="admin.without_id", methods=["GET"])
+@swag_from("../docs/admin/get_admin_by_id_using_auth_super_admin.yaml", endpoint="admin.with_id", methods=["GET"])
+@swag_from("../docs/admin/post_admin_using_auth_super_admin.yaml", endpoint="admin.without_id", methods=["POST"])
 def post_and_get_admin(id):
 
     super_admin_result = SuperAdmin.query.filter_by(email=auth_super_admin.current_user()).first()
@@ -69,29 +73,10 @@ def post_and_get_admin(id):
             "password": body_data.get("password"),
             "organization_id": organization_result.id
         }), HTTP_201_CREATED
-
-@admin.get("/<int:id>")
-@auth_super_admin.login_required
-def get_admin(id):
-    super_admin_result = SuperAdmin.query.filter_by(email=auth_super_admin.current_user()).first()
-    organization_result = Organization.query.filter_by(super_admin_id=super_admin_result.id).first()
-    admin_result = Admin.query.filter_by(id=id,organization_id=organization_result.id).first()
-
-    if not admin_result:
-        return jsonify({
-            "message": "item not found!"
-        }), HTTP_404_NOT_FOUND
-    
-    return jsonify({
-        "id": admin_result.id,
-        "name": admin_result.name,
-        "email": admin_result.email,
-        "password": admin_result.password,
-        "created_at": admin_result.created_at
-    }), HTTP_200_OK
             
 @admin.delete("/<int:id>")
 @auth_super_admin.login_required
+@swag_from("../docs/admin/delete_admin_by_id_using_auth_super_admin.yaml")
 def delete_admin(id):
     super_admin_result = SuperAdmin.query.filter_by(email=auth_super_admin.current_user()).first()
     organization_result = Organization.query.filter_by(super_admin_id=super_admin_result.id).first()
@@ -114,8 +99,8 @@ def delete_admin(id):
     return ({}), HTTP_204_NO_CONTENT
 
 @admin.put("/<int:id>")
-@admin.patch("/<int:id>")
 @auth_super_admin.login_required
+@swag_from("../docs/admin/edit_admin_by_id_using_auth_super_admin.yaml")
 def edit_admin(id):
     super_admin_result = SuperAdmin.query.filter_by(email=auth_super_admin.current_user()).first()
     organization_result = Organization.query.filter_by(super_admin_id=super_admin_result.id).first()

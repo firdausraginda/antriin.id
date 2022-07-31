@@ -1,0 +1,36 @@
+Edit organization data by id using auth super admin
+---
+
+tags:
+  - Organization
+security:
+  - BasicAuth: []
+parameters:
+  - name: body
+    description: the body should contain name, & description
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "name"
+        - "description"
+      properties:
+        name:
+          type: "string"
+          example: "user"
+        description:
+          type: "string"
+          example: "this is organization x"
+  - name: id
+    description: the path should contain organization ID
+    in: path
+    required: true
+    schema:
+      type: integer
+
+responses:
+  200:
+    description: Successfully insert data
+  404:
+    description: Organization ID not found

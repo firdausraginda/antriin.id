@@ -1,0 +1,25 @@
+Delete organization data by id using auth super admin
+---
+
+tags:
+  - Organization
+security:
+  - BasicAuth: []
+parameters:
+  - name: id
+    description: path should contain organization ID
+    in: path
+    required: true
+    schema:
+      type: integer
+      required:
+        - "id"
+      properties:
+        id:
+          example: 1
+
+responses:
+  204:
+    description: Successfully delete data
+  404:
+    description: Organization ID not found

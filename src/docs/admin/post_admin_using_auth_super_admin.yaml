@@ -1,0 +1,33 @@
+Insert admin data using auth super admin
+---
+
+tags:
+  - Admin
+security:
+  - BasicAuth: []
+parameters:
+  - name: body
+    description: the body should contain name, email & password
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "name"
+        - "email"
+        - "password"
+      properties:
+        name:
+          type: "string"
+          example: "admin"
+        email:
+          type: "email"
+          example: "admin@gmail.com"
+        password:
+          type: "string"
+          format: password
+          example: "********"
+
+responses:
+  201:
+    description: Successfully insert data

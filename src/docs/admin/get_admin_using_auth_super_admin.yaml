@@ -1,0 +1,12 @@
+Get all admin data using auth super admin
+---
+
+tags:
+  - Admin
+security:
+  - BasicAuth: []
+responses:
+  200:
+    description: Successfully get data
+  404:
+    description: admin ID not found

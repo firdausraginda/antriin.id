@@ -1,0 +1,33 @@
+Insert user data
+---
+
+tags:
+  - User
+security:
+  - BasicAuth: []
+parameters:
+  - name: body
+    description: the body should contain name, email, password
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "name"
+        - "email"
+        - "password"
+      properties:
+        name:
+          type: "string"
+          example: "user"
+        email:
+          type: "email"
+          example: "user@gmail.com"
+        password:
+          type: "string"
+          format: password
+          example: "********"
+
+responses:
+  201:
+    description: Successfully insert data

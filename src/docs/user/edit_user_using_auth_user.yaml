@@ -1,0 +1,41 @@
+Edit user data by id using auth user
+---
+
+tags:
+  - User
+security:
+  - BasicAuth: []
+parameters:
+  - name: body
+    description: the body should contain name, email, password
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "name"
+        - "email"
+        - "password"
+      properties:
+        name:
+          type: "string"
+          example: "user"
+        email:
+          type: "email"
+          example: "user@gmail.com"
+        password:
+          type: "string"
+          format: password
+          example: "********"
+  - name: id
+    description: the path should contain queue ID
+    in: path
+    required: true
+    schema:
+      type: integer
+
+responses:
+  200:
+    description: Successfully insert data
+  404:
+    description: Queue ID not found

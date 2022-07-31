@@ -1,0 +1,40 @@
+Edit queue user data by id using auth admin
+---
+
+tags:
+  - Queue User
+security:
+  - BasicAuth: []
+parameters:
+  - name: body
+    description: the body should contain status, queue_id, & user_id
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "status"
+        - "queue_id"
+        - "user_id"
+      properties:
+        status:
+          type: "string"
+          example: "in_queue"
+        queue_id:
+          type: "integer"
+          example: 1
+        user_id:
+          type: "integer"
+          example: 2
+  - name: id
+    description: the path should contain queue user ID
+    in: path
+    required: true
+    schema:
+      type: integer
+
+responses:
+  200:
+    description: Successfully insert data
+  404:
+    description: Queue or queue user ID not found

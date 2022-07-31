@@ -65,6 +65,26 @@ pip3 install Flask-HTTPAuth
 export SECRET_KEY="dev"
 ```
 
+### Other Dependencies
+
+* [flasgger](https://github.com/flasgger/flasgger)
+refer to these docs to set `swagger.py`:
+    * [initializing flasgger with default data](https://github.com/flasgger/flasgger#initializing-flasgger-with-default-data)
+    * [custom default configurations](https://github.com/flasgger/flasgger#customize-default-configurations)
+
+refer [here](https://github.com/flasgger/flasgger#using-external-yaml-files) to defin API docs in yaml file
+
+refer [here](https://swagger.io/docs/specification/2-0/authentication/) to define authorization
+
+install flasgger for better documentation
+```sh
+pip3 install -U setuptools
+```
+
+```sh
+pip3 install flasgger
+```
+
 ## Note
 
 ### [Application Factory](https://flask.palletsprojects.com/en/2.1.x/tutorial/factory/)

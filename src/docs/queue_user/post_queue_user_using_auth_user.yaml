@@ -1,0 +1,25 @@
+Insert queue user data using auth user
+---
+
+tags:
+  - Queue User
+security:
+  - BasicAuth: []
+parameters:
+  - name: id
+    description: path should contain queue ID
+    in: path
+    required: true
+    schema:
+      type: integer
+      required:
+        - "id"
+      properties:
+        id:
+          example: 1
+
+responses:
+  201:
+    description: Successfully insert data
+  404:
+    description: Queue or user not found

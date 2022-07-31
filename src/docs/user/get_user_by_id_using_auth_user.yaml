@@ -1,0 +1,11 @@
+Get user data using auth user
+---
+
+tags:
+  - User
+security:
+  - BasicAuth: []
+
+responses:
+  200:
+    description: Successfully get data

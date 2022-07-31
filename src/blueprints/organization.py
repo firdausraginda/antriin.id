@@ -2,13 +2,17 @@ from flask import Blueprint, request, jsonify
 from src.constants.http_status_code import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_404_NOT_FOUND
 from src.database import Organization, SuperAdmin, db
 from src.auth.auth_super_admin import auth_super_admin
+from flasgger import swag_from
 
 
 organization = Blueprint("organization", __name__, url_prefix="/api/v1/organization")
 
-@organization.route("/", defaults={"id": None}, methods=["POST", "GET"])
-@organization.route("/<int:id>", methods=["POST", "GET"])
+@organization.route("/", defaults={"id": None}, methods=["POST", "GET"], endpoint="without_id")
+@organization.route("/<int:id>", methods=["POST", "GET"], endpoint="with_id")
 @auth_super_admin.login_required
+@swag_from("../docs/organization/get_organization_using_auth_super_admin.yaml", endpoint="organization.without_id", methods=["GET"])
+@swag_from("../docs/organization/get_organization_by_id_using_auth_super_admin.yaml", endpoint="organization.with_id", methods=["GET"])
+@swag_from("../docs/organization/post_organization_user_using_auth_super_admin.yaml", endpoint="organization.without_id", methods=["POST"])
 def post_and_get_organization(id):
 
     super_admin_result = SuperAdmin.query.filter_by(email=auth_super_admin.current_user()).first()
@@ -63,6 +67,7 @@ def post_and_get_organization(id):
             
 @organization.delete("/<int:id>")
 @auth_super_admin.login_required
+@swag_from("../docs/organization/delete_organization_by_id_using_auth_super_admin.yaml")
 def delete_organization(id):
     super_admin_result = SuperAdmin.query.filter_by(email=auth_super_admin.current_user()).first()
     org_result = Organization.query.filter_by(id=id,super_admin_id=super_admin_result.id).first()
@@ -84,8 +89,8 @@ def delete_organization(id):
     return ({}), HTTP_204_NO_CONTENT
 
 @organization.put("/<int:id>")
-@organization.patch("/<int:id>")
 @auth_super_admin.login_required
+@swag_from("../docs/organization/edit_organization_by_id_using_auth_super_admin.yaml")
 def edit_organization(id):
     super_admin_result = SuperAdmin.query.filter_by(email=auth_super_admin.current_user()).first()
     org_result = Organization.query.filter_by(id=id,super_admin_id=super_admin_result.id).first()

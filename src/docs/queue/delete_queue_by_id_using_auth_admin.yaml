@@ -1,0 +1,25 @@
+Delete queue data by id using auth admin
+---
+
+tags:
+  - Queue
+security:
+  - BasicAuth: []
+parameters:
+  - name: id
+    description: path should contain queue ID
+    in: path
+    required: true
+    schema:
+      type: integer
+      required:
+        - "id"
+      properties:
+        id:
+          example: 1
+
+responses:
+  204:
+    description: Successfully delete data
+  404:
+    description: Queue ID not found
