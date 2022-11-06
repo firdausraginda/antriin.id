@@ -3,13 +3,15 @@ import os
 from src.lib.model import db
 from src.blueprints.organization import organization
 from src.blueprints.admin import admin
-from src.blueprints.super_admin import super_admin
 from src.blueprints.queue import queue
 from src.blueprints.queue_user import queue_user
 from src.blueprints.user import user
 from flasgger import Swagger
 from src.docs.swagger import template, swagger_config
 
+from src.functionality.db_postgre_functionality import DBPostgreFunctionality
+from src.usecase.super_admin_usecase import SuperAdminUsecase
+from src.blueprints.super_admin import process_super_admin
 
 def create_app(test_config=None):
     
@@ -34,13 +36,20 @@ def create_app(test_config=None):
         return jsonify({
             "message": "running well!"
         })
+    
+    # init repo
+    db_postgre_functionality = DBPostgreFunctionality()
+
+    # init usecase
+    super_admin_usecase = SuperAdminUsecase(db_postgre_functionality)
 
     db.app = app
     db.init_app(app)
 
     app.register_blueprint(organization)
     app.register_blueprint(admin)
-    app.register_blueprint(super_admin)
+    app.register_blueprint(process_super_admin(super_admin_usecase))
+    # app.register_blueprint(super_admin)
     app.register_blueprint(queue)
     app.register_blueprint(queue_user)
     app.register_blueprint(user)
