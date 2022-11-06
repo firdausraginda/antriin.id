@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from src.lib.http_status_code import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_404_NOT_FOUND
-from src.database import SuperAdmin, db
+from src.lib.model import SuperAdmin, db
 from flasgger import swag_from
 
 

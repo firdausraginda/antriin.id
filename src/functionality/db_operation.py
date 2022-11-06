@@ -1,6 +1,6 @@
-from src.database import Admin, Organization, SuperAdmin, Queue, QueueUser, User, db
+from src.lib.model import Admin, Organization, SuperAdmin, Queue, QueueUser, User, db
 
-class AntriinEntityRepo:
+class DBOperation:
     """Handle DB connection & operation to antriin DB"""
 
     def __init__(self) -> None:

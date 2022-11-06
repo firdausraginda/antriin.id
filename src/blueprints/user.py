@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from src.lib.http_status_code import HTTP_200_OK, HTTP_201_CREATED, HTTP_404_NOT_FOUND, HTTP_204_NO_CONTENT
-from src.database import Admin, User, Queue, QueueUser, db
+from src.lib.model import Admin, User, Queue, QueueUser, db
 from src.auth.auth_admin import auth_admin
 from src.auth.auth_user import auth_user
 from flasgger import swag_from

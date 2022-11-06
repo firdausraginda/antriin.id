@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 import os
-from src.database import db
+from src.lib.model import db
 from src.blueprints.organization import organization
 from src.blueprints.admin import admin
 from src.blueprints.super_admin import super_admin
