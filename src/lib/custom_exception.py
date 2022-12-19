@@ -55,3 +55,8 @@ HTTP_508_LOOP_DETECTED = 508
 HTTP_509_BANDWIDTH_LIMIT_EXCEEDED = 509
 HTTP_510_NOT_EXTENDED = 510
 HTTP_511_NETWORK_AUTHENTICATION_REQUIRED = 511
+
+
+class NotFoundError(Exception):
+    def __init__(self, value):
+        super().__init__(f"item {value} not found!")
