@@ -27,11 +27,11 @@ class SuperAdminUsecase:
 
         try:
             if not super_admin_result:
-                raise NotFoundError(super_admin_id)
+                raise NotFoundError()
         except NotFoundError as e:
             db.session.rollback()
             status_code = HTTP_404_NOT_FOUND
-            data = f"Error in function 'delete_super_admin()': {repr(e)}"
+            data = f"Error in function 'get_super_admin()': {repr(e)}"
         except Exception as e:
             db.session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
@@ -56,7 +56,7 @@ class SuperAdminUsecase:
         except IntegrityError as e:
             db.session.rollback()
             status_code = HTTP_400_BAD_REQUEST
-            data = f"Error in function 'delete_super_admin()': {repr(e)}"
+            data = f"Error in function 'post_super_admin()': {repr(e)}"
         except Exception as e:
             db.session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
@@ -79,7 +79,7 @@ class SuperAdminUsecase:
 
         try:
             if not super_admin_result:
-                raise NotFoundError(super_admin_id)
+                raise NotFoundError()
 
             db.session.delete(super_admin_result)
             db.session.commit()
@@ -113,7 +113,7 @@ class SuperAdminUsecase:
 
         try:
             if not super_admin_result:
-                raise NotFoundError(super_admin_id)
+                raise NotFoundError()
 
             super_admin_result.name = body_data.get("name")
             super_admin_result.email = body_data.get("email")

@@ -1,17 +1,27 @@
 from flask import Flask, jsonify
 import os
-from src.lib.model import db
-from src.blueprints.organization import organization
+
+# import swagger
+from flasgger import Swagger
+from src.docs.swagger import template, swagger_config
+
+# import blueprint
+from src.blueprints.super_admin_blueprint import process_super_admin
+from src.blueprints.organization_blueprint import process_organization
 from src.blueprints.admin import admin
 from src.blueprints.queue import queue
 from src.blueprints.queue_user import queue_user
 from src.blueprints.user import user
-from flasgger import Swagger
-from src.docs.swagger import template, swagger_config
 
-from src.functionality.db_postgre_functionality import DBPostgreFunctionality
+# import usecase
 from src.usecase.super_admin_usecase import SuperAdminUsecase
-from src.blueprints.super_admin_blueprint import process_super_admin
+from src.usecase.organization_usecase import OrganizationUsecase
+
+# import functionality
+from src.functionality.db_postgre_functionality import DBPostgreFunctionality
+
+# import lib
+from src.lib.model import db
 
 
 def create_app(test_config=None):
@@ -32,18 +42,21 @@ def create_app(test_config=None):
     def check_health():
         return jsonify({"message": "running well!"})
 
-    # init repo
+    # init functionality
     db_postgre_functionality = DBPostgreFunctionality()
 
     # init usecase
     super_admin_usecase = SuperAdminUsecase(db_postgre_functionality)
+    organization_usecase = OrganizationUsecase(db_postgre_functionality)
 
+    # init app
     db.app = app
     db.init_app(app)
 
-    app.register_blueprint(organization)
-    app.register_blueprint(admin)
+    # init blueprint
     app.register_blueprint(process_super_admin(super_admin_usecase))
+    app.register_blueprint(process_organization(organization_usecase))
+    app.register_blueprint(admin)
     app.register_blueprint(queue)
     app.register_blueprint(queue_user)
     app.register_blueprint(user)

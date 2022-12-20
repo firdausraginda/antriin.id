@@ -58,5 +58,5 @@ HTTP_511_NETWORK_AUTHENTICATION_REQUIRED = 511
 
 
 class NotFoundError(Exception):
-    def __init__(self, value):
-        super().__init__(f"item {value} not found!")
+    def __init__(self):
+        super().__init__(f"item not found!")
