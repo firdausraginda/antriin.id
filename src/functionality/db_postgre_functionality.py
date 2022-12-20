@@ -1,4 +1,5 @@
 from src.lib.model import Admin, Organization, SuperAdmin, Queue, QueueUser, User
+from typing import List
 
 
 class DBPostgreFunctionality:
@@ -29,14 +30,19 @@ class DBPostgreFunctionality:
 
         return query_result
 
-    def get_admin_using_org_id(self, org_id: str, admin_id: int) -> Admin:
+    def get_admin_using_org_id_and_admin_id(self, org_id: str, admin_id: int) -> Admin:
+        """get admin data using organization id and admin id"""
+
+        query_result = Admin.query.filter_by(
+            organization_id=org_id, id=admin_id
+        ).first()
+
+        return query_result
+
+    def get_admin_using_org_id(self, org_id: str) -> List[Admin]:
         """get admin data using organization id"""
 
-        filters = (Admin.organization_id == org_id,)
-        if id:
-            filters = filters + ((Admin.id == admin_id),)
-
-        query_result = Admin.query.filter(*filters).all()
+        query_result = Admin.query.filter_by(organization_id=org_id).all()
 
         return query_result
 
