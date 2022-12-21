@@ -17,7 +17,7 @@ class AdminUsecase:
     def __init__(self, db_postgre_functionality: DBPostgreFunctionality) -> None:
         self._db_postgre_functionality = db_postgre_functionality
 
-    def get_admin(self, super_admin_email: str, admin_id: int = None) -> dict:
+    def get_admin(self, super_admin_email: str, admin_id: int) -> dict:
 
         super_admin_result = self._db_postgre_functionality.get_super_admin_using_email(
             super_admin_email
@@ -27,8 +27,8 @@ class AdminUsecase:
             super_admin_result.id
         )
 
-        admin_result = self._db_postgre_functionality.get_admin_using_org_id(
-            org_result.id
+        admin_result = self._db_postgre_functionality.get_admin_in_list(
+            org_result.id, admin_id
         )
 
         try:
