@@ -11,13 +11,14 @@ from src.blueprints.organization_blueprint import process_organization
 from src.blueprints.admin_blueprint import process_admin
 from src.blueprints.queue_blueprint import process_queue
 from src.blueprints.queue_user import queue_user
-from src.blueprints.user import user
+from src.blueprints.user_blueprint import process_user
 
 # import usecase
 from src.usecase.super_admin_usecase import SuperAdminUsecase
 from src.usecase.organization_usecase import OrganizationUsecase
 from src.usecase.admin_usecase import AdminUsecase
 from src.usecase.queue_usecase import QueueUsecase
+from src.usecase.user_usecase import UserUsecase
 
 # import functionality
 from src.functionality.db_postgre_functionality import DBPostgreFunctionality
@@ -52,6 +53,7 @@ def create_app(test_config=None):
     organization_usecase = OrganizationUsecase(db_postgre_functionality)
     admin_usecase = AdminUsecase(db_postgre_functionality)
     queue_usecase = QueueUsecase(db_postgre_functionality)
+    user_usecase = UserUsecase(db_postgre_functionality)
 
     # init app
     db.app = app
@@ -63,7 +65,7 @@ def create_app(test_config=None):
     app.register_blueprint(process_admin(admin_usecase))
     app.register_blueprint(process_queue(queue_usecase))
     app.register_blueprint(queue_user)
-    app.register_blueprint(user)
+    app.register_blueprint(process_user(user_usecase))
 
     Swagger(app, config=swagger_config, template=template)
 

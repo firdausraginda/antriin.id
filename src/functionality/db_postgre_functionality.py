@@ -102,6 +102,14 @@ class DBPostgreFunctionality:
 
         return queue_list
 
+    def get_queue_user_using_list_queue(self, list_queue: list) -> QueueUser:
+
+        query_result = QueueUser.query.filter(
+            QueueUser.queue_id.in_([queue.id for queue in list_queue])
+        ).all()
+
+        return query_result
+
     def get_queue_user_using_queue_user_id(
         self, list_queue: list, queue_user_id: int
     ) -> QueueUser:
@@ -131,6 +139,43 @@ class DBPostgreFunctionality:
         query_result = User.query.filter_by(email=user_email).first()
 
         return query_result
+
+    def get_user_using_queue_user(self, queue_user_result: list) -> List[User]:
+
+        query_result = User.query.filter(
+            User.id.in_([queue_user.user_id for queue_user in queue_user_result])
+        ).all()
+
+        return query_result
+
+    def get_user_using_queue_user_and_user_id(
+        self, queue_user_result: list, user_id: int
+    ) -> User:
+
+        query_result = User.query.filter(
+            User.id.in_([queue_user.user_id for queue_user in queue_user_result]),
+            User.id == user_id,
+        ).first()
+
+        return query_result
+
+    def get_user_in_list(self, queue_user_list: list, user_id: int) -> list:
+
+        user_result = (
+            self.get_user_using_queue_user_and_user_id(queue_user_list, user_id)
+            if user_id
+            else self.get_user_using_queue_user(queue_user_list)
+        )
+
+        # convert query result to list
+        user_list = []
+        if user_result:
+            if isinstance(user_result, list):
+                user_list = user_list + user_result
+            else:
+                user_list.append(user_result)
+
+        return user_list
 
     def get_queue_user_using_queue_id_and_user_id(
         self, queue_id: int, user_id: int
