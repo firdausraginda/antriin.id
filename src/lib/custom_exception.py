@@ -60,3 +60,8 @@ HTTP_511_NETWORK_AUTHENTICATION_REQUIRED = 511
 class NotFoundError(Exception):
     def __init__(self):
         super().__init__(f"item not found!")
+
+
+class DuplicateItemByForeignKey(Exception):
+    def __init__(self):
+        super().__init__(f"item duplicate by foreign key!")
