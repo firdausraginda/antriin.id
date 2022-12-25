@@ -23,7 +23,7 @@ class QueueUsecase:
             admin_email
         )
 
-        queue_result = self._db_postgre_functionality.get_queue_in_list(
+        queue_result = self._db_postgre_functionality.get_queue_in_list_by_admin(
             queue_id, admin_result.id
         )
 
