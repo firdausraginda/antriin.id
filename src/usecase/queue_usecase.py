@@ -91,7 +91,7 @@ class QueueUsecase:
 
             db.session.add(queue)
             db.session.commit()
-        except IntegrityError as e:
+        except (StatementError, IntegrityError) as e:
             db.session.rollback()
             status_code = HTTP_400_BAD_REQUEST
             data = f"Error in function 'post_queue()': {repr(e)}"
@@ -166,11 +166,7 @@ class QueueUsecase:
             queue_result.status = body_data.get("status")
 
             db.session.commit()
-        except IntegrityError as e:
-            db.session.rollback()
-            status_code = HTTP_400_BAD_REQUEST
-            data = f"Error in function 'edit_queue()': {repr(e)}"
-        except StatementError as e:
+        except (StatementError, IntegrityError) as e:
             db.session.rollback()
             status_code = HTTP_400_BAD_REQUEST
             data = f"Error in function 'edit_queue()': {repr(e)}"

@@ -84,11 +84,7 @@ class QueueUserUsecase:
             db.session.rollback()
             status_code = HTTP_404_NOT_FOUND
             data = f"Error in function 'post_queue_user_by_admin()': {repr(e)}"
-        except DuplicateItemByForeignKey as e:
-            db.session.rollback()
-            status_code = HTTP_400_BAD_REQUEST
-            data = f"Error in function 'post_queue_user_by_admin()': {repr(e)}"
-        except IntegrityError as e:
+        except (IntegrityError, DuplicateItemByForeignKey) as e:
             db.session.rollback()
             status_code = HTTP_400_BAD_REQUEST
             data = f"Error in function 'post_queue_user_by_admin()': {repr(e)}"
@@ -132,11 +128,7 @@ class QueueUserUsecase:
             db.session.rollback()
             status_code = HTTP_404_NOT_FOUND
             data = f"Error in function 'post_queue_user_by_user()': {repr(e)}"
-        except DuplicateItemByForeignKey as e:
-            db.session.rollback()
-            status_code = HTTP_400_BAD_REQUEST
-            data = f"Error in function 'post_queue_user_by_user()': {repr(e)}"
-        except IntegrityError as e:
+        except (IntegrityError, DuplicateItemByForeignKey) as e:
             db.session.rollback()
             status_code = HTTP_400_BAD_REQUEST
             data = f"Error in function 'post_queue_user_by_user()': {repr(e)}"
@@ -217,11 +209,7 @@ class QueueUserUsecase:
             queue_user_result.user_id = body_data.get("user_id")
 
             db.session.commit()
-        except IntegrityError as e:
-            db.session.rollback()
-            status_code = HTTP_400_BAD_REQUEST
-            data = f"Error in function 'edit_queue_user()': {repr(e)}"
-        except StatementError as e:
+        except (StatementError, IntegrityError) as e:
             db.session.rollback()
             status_code = HTTP_400_BAD_REQUEST
             data = f"Error in function 'edit_queue_user()': {repr(e)}"
