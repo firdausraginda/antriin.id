@@ -7,25 +7,17 @@ security:
   - BasicAuth: []
 parameters:
   - name: body
-    description: the body should contain status, queue_id, & user_id
+    description: the body should contain status
     in: body
     required: true
     schema:
       type: object
       required:
         - "status"
-        - "queue_id"
-        - "user_id"
       properties:
         status:
           type: "string"
           example: "in_queue"
-        queue_id:
-          type: "integer"
-          example: 1
-        user_id:
-          type: "integer"
-          example: 2
   - name: queue_user_id
     description: the path should contain queue_user_id
     in: path

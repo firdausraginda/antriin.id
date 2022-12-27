@@ -1,12 +1,4 @@
 from flask import Blueprint, request, jsonify
-from src.lib.custom_exception import (
-    HTTP_200_OK,
-    HTTP_201_CREATED,
-    HTTP_204_NO_CONTENT,
-    HTTP_404_NOT_FOUND,
-    HTTP_302_FOUND,
-)
-from src.lib.model import Queue, QueueUser, Admin, db
 from src.auth.auth_admin import auth_admin
 from src.auth.auth_user import auth_user
 from flasgger import swag_from
@@ -35,7 +27,9 @@ def process_queue_user(queue_user_usecase):
     def post_queue_user_by_auth_admin():
 
         body_data = request.get_json()
-        result = queue_user_usecase.post_queue_user_by_admin(body_data)
+        result = queue_user_usecase.post_queue_user_by_admin(
+            auth_admin.current_user(), body_data
+        )
 
         return jsonify({"data": result["data"]}), result["status_code"]
 
