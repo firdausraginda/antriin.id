@@ -1,4 +1,4 @@
-from src.lib.model import Queue, QueueUser, User, db
+from src.lib.model import QueueUser, db
 from src.lib.custom_exception import (
     HTTP_200_OK,
     HTTP_201_CREATED,
@@ -50,7 +50,15 @@ class QueueUserUsecase:
 
         return {"status_code": status_code, "data": data}
 
-    def post_queue_user_by_admin(self, body_data: dict) -> dict:
+    def post_queue_user_by_admin(self, admin_email: str, body_data: dict) -> dict:
+
+        admin_result = self._db_postgre_functionality.get_admin_using_admin_email(
+            admin_email
+        )
+
+        queue_existing_result = self._db_postgre_functionality.get_queue_using_admin_id(
+            admin_result.id
+        )
 
         queue_user = QueueUser(
             status=body_data.get("status"),
@@ -66,17 +74,24 @@ class QueueUserUsecase:
             queue_user.user_id
         )
 
-        queue_user_result = (
-            self._db_postgre_functionality.get_queue_user_using_queue_id_and_user_id(
-                queue_result.id, user_result.id
-            )
-        )
-
         try:
-            if not queue_result or not user_result:
+            if (
+                not queue_result
+                or not user_result
+                or not any(
+                    [
+                        queue_user.queue_id == queue_existing.id
+                        for queue_existing in queue_existing_result
+                    ]
+                )
+            ):
                 raise NotFoundError()
-            elif queue_user_result:
-                raise DuplicateItemByForeignKey()
+            else:
+                queue_user_result = self._db_postgre_functionality.get_queue_user_using_queue_id_and_user_id(
+                    queue_result.id, user_result.id
+                )
+                if queue_user_result:
+                    raise DuplicateItemByForeignKey()
 
             db.session.add(queue_user)
             db.session.commit()
@@ -196,17 +211,18 @@ class QueueUserUsecase:
             admin_result.id
         )
 
-        queue_user_result = self._db_postgre_functionality.get_queue_user_using_list_queue_and_queue_user_id(
-            queue_result, queue_user_id
-        )
-
         try:
-            if not queue_result or not queue_user_result:
+            if len(queue_result) == 0:
                 raise NotFoundError()
+            else:
+                queue_user_result = self._db_postgre_functionality.get_queue_user_using_list_queue_and_queue_user_id(
+                    queue_result, queue_user_id
+                )
+
+                if not queue_user_result:
+                    raise NotFoundError()
 
             queue_user_result.status = body_data.get("status")
-            queue_user_result.queue_id = body_data.get("queue_id")
-            queue_user_result.user_id = body_data.get("user_id")
 
             db.session.commit()
         except (StatementError, IntegrityError) as e:
