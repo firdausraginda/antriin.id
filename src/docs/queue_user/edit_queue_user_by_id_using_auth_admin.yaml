@@ -34,3 +34,4 @@ responses:
     description: Bad request, violates integrity constraints
   500:
     description: Internal server error
+  
