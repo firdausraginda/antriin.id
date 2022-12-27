@@ -1,4 +1,4 @@
-Edit queue data by id using auth admin
+Edit queue data by queue_id using auth admin
 ---
 
 tags:
@@ -26,8 +26,8 @@ parameters:
         status:
           type: "string"
           example: "active"
-  - name: id
-    description: the path should contain queue ID
+  - name: queue_id
+    description: the path should contain queue_id
     in: path
     required: true
     schema:
@@ -37,4 +37,8 @@ responses:
   200:
     description: Successfully insert data
   404:
-    description: Queue ID not found
+    description: Item not found
+  400:
+    description: Bady request, violates integrity constraints
+  500:
+    description: Internal server error

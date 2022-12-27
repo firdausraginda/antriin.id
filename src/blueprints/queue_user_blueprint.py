@@ -41,7 +41,7 @@ def process_queue_user(queue_user_usecase):
 
     @queue_user.post("/join_queue/<int:queue_id>")
     @auth_user.login_required
-    @swag_from("../docs/queue_user/post_queue_user_using_auth_user.yaml")
+    @swag_from("../docs/queue_user/post_queue_user_by_id_using_auth_user.yaml")
     def post_queue_user_by_auth_user(queue_id):
 
         result = queue_user_usecase.post_queue_user_by_user(

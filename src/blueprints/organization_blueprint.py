@@ -34,9 +34,7 @@ def process_organization(organization_usecase):
 
     @organization.delete("/")
     @auth_super_admin.login_required
-    @swag_from(
-        "../docs/organization/delete_organization_by_id_using_auth_super_admin.yaml"
-    )
+    @swag_from("../docs/organization/delete_organization_using_auth_super_admin.yaml")
     def delete_organization():
 
         result = organization_usecase.delete_organization(
@@ -47,9 +45,7 @@ def process_organization(organization_usecase):
 
     @organization.put("/")
     @auth_super_admin.login_required
-    @swag_from(
-        "../docs/organization/edit_organization_by_id_using_auth_super_admin.yaml"
-    )
+    @swag_from("../docs/organization/edit_organization_using_auth_super_admin.yaml")
     def edit_organization():
 
         body_data = request.get_json()

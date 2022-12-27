@@ -1,4 +1,4 @@
-Edit organization data by id using auth super admin
+Edit organization data using auth super admin
 ---
 
 tags:
@@ -22,15 +22,13 @@ parameters:
         description:
           type: "string"
           example: "this is organization x"
-  - name: id
-    description: the path should contain organization ID
-    in: path
-    required: true
-    schema:
-      type: integer
 
 responses:
   200:
     description: Successfully insert data
   404:
-    description: Organization ID not found
+    description: Item not found
+  400:
+    description: Bad request, violates integrity constraints
+  500:
+    description: Internal server error

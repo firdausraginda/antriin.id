@@ -10,3 +10,5 @@ responses:
     description: Successfully get data
   404:
     description: queue ID not found
+  500:
+    description: Internal server error

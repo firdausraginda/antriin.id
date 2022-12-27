@@ -1,4 +1,4 @@
-Delete queue data by queue_id using auth admin
+Get queue data by queue_id using auth user
 ---
 
 tags:
@@ -19,11 +19,9 @@ parameters:
           example: 1
 
 responses:
-  204:
-    description: Successfully delete data
+  200:
+    description: Successfully get data
   404:
     description: Item not found
-  400:
-    description: Bad request, violates integrity constraints
   500:
     description: Internal server error

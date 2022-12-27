@@ -1,4 +1,4 @@
-Delete queue user data by queue_user_id using auth admin
+Insert queue user data by queue_id using auth user
 ---
 
 tags:
@@ -6,21 +6,21 @@ tags:
 security:
   - BasicAuth: []
 parameters:
-  - name: queue_user_id
-    description: path should contain queue_user_id
+  - name: queue_id
+    description: path should contain queue_id
     in: path
     required: true
     schema:
       type: integer
       required:
-        - "queue_user_id"
+        - "queue_id"
       properties:
-        queue_user_id:
+        queue_id:
           example: 1
 
 responses:
-  204:
-    description: Successfully delete data
+  201:
+    description: Successfully insert data
   404:
     description: Item not found
   400:

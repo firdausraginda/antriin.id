@@ -1,4 +1,4 @@
-Edit super admin data by id
+Edit super admin data by super_admin_id
 ---
 
 tags:
@@ -25,8 +25,8 @@ parameters:
           type: "string"
           format: password
           example: "********"
-  - name: id
-    description: the path should contain super admin ID
+  - name: super_admin_id
+    description: the path should contain super_admin_id
     in: path
     required: true
     schema:
@@ -36,4 +36,8 @@ responses:
   200:
     description: Successfully insert data
   404:
-    description: Super admin ID not found
+    description: Item not found
+  400:
+    description: Bad request, violates integrity constraints
+  500:
+    description: Internal server error

@@ -1,4 +1,4 @@
-Delete admin data by id using auth super admin
+Delete admin data by admin_id using auth super admin
 ---
 
 tags:
@@ -6,20 +6,24 @@ tags:
 security:
   - BasicAuth: []
 parameters:
-  - name: id
-    description: path should contain admin ID
+  - name: admin_id
+    description: path should contain admin_id
     in: path
     required: true
     schema:
       type: integer
       required:
-        - "id"
+        - "admin_id"
       properties:
-        id:
+        admin_id:
           example: 1
 
 responses:
   204:
     description: Successfully delete data
   404:
-    description: Admin ID not found
+    description: Item not found
+  400:
+    description: Bad request, violates integrity constraints
+  500:
+    description: Internal server error

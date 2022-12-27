@@ -1,23 +1,27 @@
-Delete super admin data by id
+Delete super admin data by super_admin_id
 ---
 
 tags:
   - Super Admin
 parameters:
-  - name: id
-    description: path should contain super admin ID
+  - name: super_admin_id
+    description: path should contain super_admin_id
     in: path
     required: true
     schema:
       type: integer
       required:
-        - "id"
+        - "super_admin_id"
       properties:
-        id:
+        super_admin_id:
           example: 1
 
 responses:
   204:
     description: Successfully delete data
   404:
-    description: Super admin ID not found
+    description: Item not found
+  400:
+    description: Bad request, violates integriy constraints
+  500:
+    description: Internal server error

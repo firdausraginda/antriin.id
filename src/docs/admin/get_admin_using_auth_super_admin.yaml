@@ -9,4 +9,6 @@ responses:
   200:
     description: Successfully get data
   404:
-    description: admin ID not found
+    description: Item not found
+  500:
+    description: Internal server error

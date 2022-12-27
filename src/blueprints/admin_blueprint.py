@@ -7,11 +7,17 @@ def process_admin(admin_usecase):
 
     admin = Blueprint("admin", __name__, url_prefix="/api/v1/admin")
 
-    @admin.get("/", defaults={"admin_id": None})
-    @admin.get("/<int:admin_id>")
+    @admin.get("/", defaults={"admin_id": None}, endpoint="without_id")
+    @admin.get("/<int:admin_id>", endpoint="with_id")
     @auth_super_admin.login_required
-    @swag_from("../docs/admin/get_admin_using_auth_super_admin.yaml")
-    @swag_from("../docs/admin/get_admin_by_id_using_auth_super_admin.yaml")
+    @swag_from(
+        "../docs/admin/get_admin_using_auth_super_admin.yaml",
+        endpoint="admin.without_id",
+    )
+    @swag_from(
+        "../docs/admin/get_admin_by_id_using_auth_super_admin.yaml",
+        endpoint="admin.with_id",
+    )
     def get_admin(admin_id):
 
         result = admin_usecase.get_admin(auth_super_admin.current_user(), admin_id)

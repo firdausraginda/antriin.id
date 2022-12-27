@@ -26,3 +26,9 @@ parameters:
 responses:
   201:
     description: Successfully insert data
+  404:
+    description: Item not found
+  400:
+    description: Bad request, violates integrity constraints
+  500:
+    description: Internal server error

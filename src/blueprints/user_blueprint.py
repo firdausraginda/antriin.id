@@ -21,7 +21,7 @@ def process_user(user_usecase):
 
     @user.get("/profile")
     @auth_user.login_required
-    @swag_from("../docs/user/get_user_by_id_using_auth_user.yaml")
+    @swag_from("../docs/user/get_user_using_auth_user.yaml")
     def get_user_by_auth_user():
 
         result = user_usecase.get_user_by_user(auth_user.current_user())

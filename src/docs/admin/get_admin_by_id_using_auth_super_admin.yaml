@@ -1,4 +1,4 @@
-Get admin data by id using auth super admin
+Get admin data by admin_id using auth super admin
 ---
 
 tags:
@@ -6,20 +6,22 @@ tags:
 security:
   - BasicAuth: []
 parameters:
-  - name: id
-    description: path should contain admin ID
+  - name: admin_id
+    description: path should contain admin_id
     in: path
     required: true
     schema:
       type: integer
       required:
-        - "id"
+        - "admin_id"
       properties:
-        id:
+        admin_id:
           example: 1
 
 responses:
   200:
     description: Successfully get data
   404:
-    description: Admin ID not found
+    description: Item not found
+  500:
+    description: Internal server error

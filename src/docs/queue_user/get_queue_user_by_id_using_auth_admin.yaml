@@ -1,4 +1,4 @@
-Get queue user data by id using auth admin
+Get queue user data by queue_user_id using auth admin
 ---
 
 tags:
@@ -6,20 +6,22 @@ tags:
 security:
   - BasicAuth: []
 parameters:
-  - name: id
-    description: path should contain queue user ID
+  - name: queue_user_id
+    description: path should contain queue_user_id
     in: path
     required: true
     schema:
       type: integer
       required:
-        - "id"
+        - "queue_user_id"
       properties:
-        id:
+        queue_user_id:
           example: 1
 
 responses:
   200:
     description: Successfully get data
   404:
-    description: Queue user ID not found
+    description: Item not found
+  500:
+    description: Internal server error
