@@ -25,17 +25,22 @@ from src.usecase.user_usecase import UserUsecase
 from src.functionality.db_postgre_functionality import DBPostgreFunctionality
 
 # import lib
-from src.lib.model import db
+# from src.lib.model_v2 import db
+from sqlmodel import SQLModel, create_engine
 
 
 def create_app(test_config=None):
 
     app = Flask(__name__, instance_relative_config=True)
+    engine = create_engine(os.environ.get("SQLALCHEMY_DB_URI"))
+
+    @app.before_first_request
+    def create_db():
+        SQLModel.metadata.create_all(engine)
 
     if test_config is None:
         app.config.from_mapping(
             SECRET_KEY=os.environ.get("SECRET_KEY"),
-            SQLALCHEMY_DATABASE_URI=os.environ.get("SQLALCHEMY_DB_URI"),
             SQLALCHEMY_TRACK_MODIFICATIONS=False,
             SWAGGER={"title": "antriin.id API", "uiversion": 3},
         )
@@ -47,7 +52,7 @@ def create_app(test_config=None):
         return jsonify({"message": "running well!"})
 
     # init functionality
-    db_postgre_functionality = DBPostgreFunctionality()
+    db_postgre_functionality = DBPostgreFunctionality(engine)
 
     # init usecase
     super_admin_usecase = SuperAdminUsecase(db_postgre_functionality)
@@ -56,10 +61,6 @@ def create_app(test_config=None):
     queue_usecase = QueueUsecase(db_postgre_functionality)
     queue_user_usecase = QueueUserUsecase(db_postgre_functionality)
     user_usecase = UserUsecase(db_postgre_functionality)
-
-    # init app
-    db.app = app
-    db.init_app(app)
 
     # init blueprint
     app.register_blueprint(process_super_admin(super_admin_usecase))

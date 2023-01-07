@@ -1,4 +1,4 @@
-from src.lib.model import Queue, db
+from src.lib.model_v2 import Queue
 from src.lib.custom_exception import (
     HTTP_200_OK,
     HTTP_201_CREATED,

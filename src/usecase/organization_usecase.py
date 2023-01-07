@@ -1,5 +1,5 @@
 from src.functionality.db_postgre_functionality import DBPostgreFunctionality
-from src.lib.model import Organization, db
+from src.lib.model_v2 import Organization
 from src.lib.custom_exception import (
     HTTP_200_OK,
     HTTP_201_CREATED,

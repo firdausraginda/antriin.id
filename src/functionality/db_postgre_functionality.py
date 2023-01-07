@@ -1,21 +1,23 @@
-from src.lib.model import Admin, Organization, SuperAdmin, Queue, QueueUser, User
+from src.lib.model_v2 import Admin, Organization, SuperAdmin, Queue, QueueUser, User
 from typing import List
+from sqlmodel import select, Session
 
 
 class DBPostgreFunctionality:
     """Handle DB connection & operation to antriin DB"""
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, engine) -> None:
+        self._engine = engine
 
     def get_super_admin_using_email(self, super_admin_email: str) -> SuperAdmin:
         """get super admin data using email"""
 
         return SuperAdmin.query.filter_by(email=super_admin_email).first()
 
-    def get_super_admin_using_super_admin_id(self, super_admin_id: int) -> dict:
+    def get_super_admin_using_super_admin_id(self, super_admin_id: int):
+        """get super admin data using super admin id"""
 
-        return SuperAdmin.query.filter_by(id=super_admin_id).first()
+        return select(SuperAdmin).where(SuperAdmin.id == super_admin_id)
 
     def get_org_using_super_admin_id(self, super_admin_id: int) -> Organization:
         """get organization data using super admin id"""
