@@ -11,52 +11,66 @@ from src.lib.custom_exception import NotFoundError
 from src.lib.function import convert_model_to_dict
 from src.functionality.db_postgre_functionality import DBPostgreFunctionality
 from sqlalchemy.exc import IntegrityError
+from sqlmodel import Session
 
 
 class AdminUsecase:
     def __init__(self, db_postgre_functionality: DBPostgreFunctionality) -> None:
         self._db_postgre_functionality = db_postgre_functionality
+        self._engine = self._db_postgre_functionality._engine
 
     def get_admin(self, super_admin_email: str, admin_id: int) -> dict:
 
-        super_admin_result = self._db_postgre_functionality.get_super_admin_using_email(
-            super_admin_email
-        )
+        session = Session(self._engine)
 
-        org_result = self._db_postgre_functionality.get_org_using_super_admin_id(
-            super_admin_result.id
-        )
+        super_admin_result = session.exec(
+            self._db_postgre_functionality.get_super_admin_using_email(
+                super_admin_email
+            )
+        ).first()
 
-        admin_result = self._db_postgre_functionality.get_admin_in_list(
-            org_result.id, admin_id
-        )
+        org_result = session.exec(
+            self._db_postgre_functionality.get_org_using_super_admin_id(
+                super_admin_result.id
+            )
+        ).first()
+
+        admin_result = session.exec(
+            self._db_postgre_functionality.get_admin_in_list(org_result.id, admin_id)
+        ).all()
 
         try:
             if not org_result or len(admin_result) == 0:
                 raise NotFoundError()
         except NotFoundError as e:
-            db.session.rollback()
             status_code = HTTP_404_NOT_FOUND
             data = f"Error in function 'get_admin()': {repr(e)}"
         except Exception as e:
-            db.session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'get_admin()': {repr(e)}"
         else:
             status_code = HTTP_200_OK
             data = [convert_model_to_dict(admin) for admin in admin_result]
+        finally:
+            session.close()
 
         return {"status_code": status_code, "data": data}
 
     def post_admin(self, super_admin_email: str, body_data: dict) -> dict:
 
-        super_admin_result = self._db_postgre_functionality.get_super_admin_using_email(
-            super_admin_email
-        )
+        session = Session(self._engine)
 
-        org_result = self._db_postgre_functionality.get_org_using_super_admin_id(
-            super_admin_result.id
-        )
+        super_admin_result = session.exec(
+            self._db_postgre_functionality.get_super_admin_using_email(
+                super_admin_email
+            )
+        ).first()
+
+        org_result = session.exec(
+            self._db_postgre_functionality.get_org_using_super_admin_id(
+                super_admin_result.id
+            )
+        ).first()
 
         try:
             if not org_result:
@@ -69,63 +83,66 @@ class AdminUsecase:
                 organization_id=org_result.id,
             )
 
-            db.session.add(admin)
-            db.session.commit()
+            session.add(admin)
+            session.commit()
+            session.flush()
         except IntegrityError as e:
-            db.session.rollback()
             status_code = HTTP_400_BAD_REQUEST
             data = f"Error in function 'post_admin()': {repr(e)}"
         except Exception as e:
-            db.session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'post_admin()': {repr(e)}"
         else:
             status_code = HTTP_201_CREATED
             data = convert_model_to_dict(admin)
         finally:
-            db.session.close()
+            session.close()
 
         return {"status_code": status_code, "data": data}
 
     def delete_admin(self, super_admin_email: str, admin_id: int) -> dict:
 
-        super_admin_result = self._db_postgre_functionality.get_super_admin_using_email(
-            super_admin_email
-        )
+        session = Session(self._engine)
 
-        org_result = self._db_postgre_functionality.get_org_using_super_admin_id(
-            super_admin_result.id
-        )
+        super_admin_result = session.exec(
+            self._db_postgre_functionality.get_super_admin_using_email(
+                super_admin_email
+            )
+        ).first()
 
-        admin_result = (
+        org_result = session.exec(
+            self._db_postgre_functionality.get_org_using_super_admin_id(
+                super_admin_result.id
+            )
+        ).first()
+
+        admin_result = session.exec(
             self._db_postgre_functionality.get_admin_using_org_id_and_admin_id(
                 org_result.id, admin_id
             )
-        )
+        ).first()
 
         try:
             if not org_result or not admin_result:
                 raise NotFoundError()
 
-            db.session.delete(admin_result)
-            db.session.commit()
+            session.delete(admin_result)
+            session.commit()
+            session.flush()
         except IntegrityError as e:
-            db.session.rollback()
             status_code = HTTP_400_BAD_REQUEST
             data = f"Error in function 'delete_admin()': {repr(e)}"
         except NotFoundError as e:
-            db.session.rollback()
             status_code = HTTP_404_NOT_FOUND
             data = f"Error in function 'delete_admin()': {repr(e)}"
         except Exception as e:
-            db.session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'delete_admin()': {repr(e)}"
         else:
             status_code = HTTP_204_NO_CONTENT
             data = None  # if deletion success, didn't return any result
         finally:
-            db.session.close()
+            session.close()
 
         return {"status_code": status_code, "data": data}
 
@@ -133,19 +150,25 @@ class AdminUsecase:
         self, super_admin_email: str, admin_id: int, body_data: dict
     ) -> dict:
 
-        super_admin_result = self._db_postgre_functionality.get_super_admin_using_email(
-            super_admin_email
-        )
+        session = Session(self._engine)
 
-        org_result = self._db_postgre_functionality.get_org_using_super_admin_id(
-            super_admin_result.id
-        )
+        super_admin_result = session.exec(
+            self._db_postgre_functionality.get_super_admin_using_email(
+                super_admin_email
+            )
+        ).first()
 
-        admin_result = (
+        org_result = session.exec(
+            self._db_postgre_functionality.get_org_using_super_admin_id(
+                super_admin_result.id
+            )
+        ).first()
+
+        admin_result = session.exec(
             self._db_postgre_functionality.get_admin_using_org_id_and_admin_id(
                 org_result.id, admin_id
             )
-        )
+        ).first()
 
         try:
             if not org_result or not admin_result:
@@ -155,23 +178,21 @@ class AdminUsecase:
             admin_result.email = body_data.get("email")
             admin_result.password = body_data.get("password")
 
-            db.session.commit()
+            session.commit()
+            session.flush()
         except IntegrityError as e:
-            db.session.rollback()
             status_code = HTTP_400_BAD_REQUEST
             data = f"Error in function 'edit_admin()': {repr(e)}"
         except NotFoundError as e:
-            db.session.rollback()
             status_code = HTTP_404_NOT_FOUND
             data = f"Error in function 'edit_admin()': {repr(e)}"
         except Exception as e:
-            db.session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'edit_admin()': {repr(e)}"
         else:
             status_code = HTTP_200_OK
             data = convert_model_to_dict(admin_result)
         finally:
-            db.session.close()
+            session.close()
 
         return {"status_code": status_code, "data": data}

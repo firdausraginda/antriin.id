@@ -31,30 +31,22 @@ class DBPostgreFunctionality:
     def get_admin_using_org_id(self, org_id: str) -> List[Admin]:
         """get admin data using organization id"""
 
-        return Admin.query.filter_by(organization_id=org_id).all()
+        return select(Admin).where(Admin.organization_id == org_id)
 
     def get_admin_using_org_id_and_admin_id(self, org_id: str, admin_id: int) -> Admin:
         """get admin data using organization id and admin id"""
 
-        return Admin.query.filter_by(organization_id=org_id, id=admin_id).first()
+        return select(Admin).where(
+            Admin.organization_id == org_id, Admin.id == admin_id
+        )
 
     def get_admin_in_list(self, org_id: str, admin_id: int) -> list:
 
-        admin_result = (
+        return (
             self.get_admin_using_org_id_and_admin_id(org_id, admin_id)
             if admin_id
             else self.get_admin_using_org_id(org_id)
         )
-
-        # convert query result to list
-        admin_list = []
-        if admin_result:
-            if isinstance(admin_result, list):
-                admin_list = admin_list + admin_result
-            else:
-                admin_list.append(admin_result)
-
-        return admin_list
 
     def get_queue_using_queue_id(self, queue_id: int) -> Queue:
 
