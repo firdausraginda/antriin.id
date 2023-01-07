@@ -1,6 +1,6 @@
 from src.lib.model_v2 import Admin, Organization, SuperAdmin, Queue, QueueUser, User
 from typing import List
-from sqlmodel import select, Session
+from sqlmodel import select
 
 
 class DBPostgreFunctionality:
@@ -12,7 +12,7 @@ class DBPostgreFunctionality:
     def get_super_admin_using_email(self, super_admin_email: str) -> SuperAdmin:
         """get super admin data using email"""
 
-        return SuperAdmin.query.filter_by(email=super_admin_email).first()
+        return select(SuperAdmin).where(SuperAdmin.email == super_admin_email)
 
     def get_super_admin_using_super_admin_id(self, super_admin_id: int):
         """get super admin data using super admin id"""
@@ -22,7 +22,7 @@ class DBPostgreFunctionality:
     def get_org_using_super_admin_id(self, super_admin_id: int) -> Organization:
         """get organization data using super admin id"""
 
-        return Organization.query.filter_by(super_admin_id=super_admin_id).first()
+        return select(Organization).where(Organization.super_admin_id == super_admin_id)
 
     def get_admin_using_admin_email(self, admin_email: str) -> Admin:
 

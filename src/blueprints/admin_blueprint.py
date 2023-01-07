@@ -1,9 +1,10 @@
 from flask import Blueprint, request, jsonify
-from src.auth.auth_super_admin import auth_super_admin
+
+# from src.auth.auth_super_admin import auth_super_admin
 from flasgger import swag_from
 
 
-def process_admin(admin_usecase):
+def process_admin(admin_usecase, auth_super_admin):
 
     admin = Blueprint("admin", __name__, url_prefix="/api/v1/admin")
 

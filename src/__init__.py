@@ -28,6 +28,9 @@ from src.functionality.db_postgre_functionality import DBPostgreFunctionality
 # from src.lib.model_v2 import db
 from sqlmodel import SQLModel, create_engine
 
+# import auth
+from src.auth.super_admin_auth import super_admin_auth
+
 
 def create_app(test_config=None):
 
@@ -62,10 +65,15 @@ def create_app(test_config=None):
     queue_user_usecase = QueueUserUsecase(db_postgre_functionality)
     user_usecase = UserUsecase(db_postgre_functionality)
 
+    # init auth
+    super_admin_auth_init = super_admin_auth(db_postgre_functionality)
+
     # init blueprint
     app.register_blueprint(process_super_admin(super_admin_usecase))
-    app.register_blueprint(process_organization(organization_usecase))
-    app.register_blueprint(process_admin(admin_usecase))
+    app.register_blueprint(
+        process_organization(organization_usecase, super_admin_auth_init)
+    )
+    app.register_blueprint(process_admin(admin_usecase, super_admin_auth_init))
     app.register_blueprint(process_queue(queue_usecase))
     app.register_blueprint(process_queue_user(queue_user_usecase))
     app.register_blueprint(process_user(user_usecase))
