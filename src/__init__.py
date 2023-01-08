@@ -30,6 +30,8 @@ from sqlmodel import SQLModel, create_engine
 
 # import auth
 from src.auth.super_admin_auth import super_admin_auth
+from src.auth.admin_auth import admin_auth
+from src.auth.user_auth import user_auth
 
 
 def create_app(test_config=None):
@@ -67,6 +69,8 @@ def create_app(test_config=None):
 
     # init auth
     super_admin_auth_init = super_admin_auth(db_postgre_functionality)
+    admin_auth_init = admin_auth(db_postgre_functionality)
+    user_auth_init = user_auth(db_postgre_functionality)
 
     # init blueprint
     app.register_blueprint(process_super_admin(super_admin_usecase))
@@ -74,9 +78,13 @@ def create_app(test_config=None):
         process_organization(organization_usecase, super_admin_auth_init)
     )
     app.register_blueprint(process_admin(admin_usecase, super_admin_auth_init))
-    app.register_blueprint(process_queue(queue_usecase))
-    app.register_blueprint(process_queue_user(queue_user_usecase))
-    app.register_blueprint(process_user(user_usecase))
+    app.register_blueprint(
+        process_queue(queue_usecase, admin_auth_init, user_auth_init)
+    )
+    app.register_blueprint(
+        process_queue_user(queue_user_usecase, admin_auth_init, user_auth_init)
+    )
+    app.register_blueprint(process_user(user_usecase, admin_auth_init, user_auth_init))
 
     Swagger(app, config=swagger_config, template=template)
 

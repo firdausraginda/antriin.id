@@ -1,7 +1,7 @@
 from sqlmodel import Field, Relationship, SQLModel, Enum, Column
-from typing import List
+from typing import List, Optional
 from datetime import datetime
-import enum, random, string
+import enum
 
 
 class SuperAdmin(SQLModel, table=True):
@@ -47,13 +47,14 @@ class QueueStatus(str, enum.Enum):
 
 
 class Queue(SQLModel, table=True):
-    id: int = Field(primary_key=True)
+    __tablename__ = "queue"
+    id: Optional[int] = Field(primary_key=True)
     name: str = Field(nullable=False)
-    created_at: datetime = Field(default=datetime.now())
-    updated_at: datetime = Field(default=datetime.now())
+    created_at: Optional[datetime] = Field(default=datetime.now())
+    updated_at: Optional[datetime] = Field(default=datetime.now())
     description: str = Field(nullable=True)
     status: QueueStatus = Field(
-        sa_column=Column(Enum(QueueStatus)), nullable=False, default="off"
+        sa_column=Column(Enum(QueueStatus)), default=QueueStatus.off
     )
     short_url: str = Field(nullable=False)
     admin_id: int = Field(foreign_key="admin.id", nullable=False)
@@ -61,22 +62,9 @@ class Queue(SQLModel, table=True):
     admin: Admin = Relationship(back_populates="queues")
     queueusers: List["QueueUser"] = Relationship(back_populates="queue")
 
-    def generate_short_url(self):
-        random_string = "".join(random.choices(string.ascii_letters, k=5))
-        query_result = self.query.filter_by(short_url=random_string).first()
-
-        if query_result:
-            self.generate_short_url()
-        else:
-            return random_string
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-        self.short_url = self.generate_short_url()
-
 
 class User(SQLModel, table=True):
+    __tablename__ = "user"
     id: int = Field(primary_key=True)
     name: str = Field(nullable=False)
     email: str = Field(nullable=False, unique=True)
@@ -92,6 +80,7 @@ class QueueUserStatus(str, enum.Enum):
 
 
 class QueueUser(SQLModel, table=True):
+    __tablename__ = "queue_user"
     id: int = Field(primary_key=True)
     status: QueueUserStatus = Field(
         sa_column=Column(Enum(QueueUserStatus)), nullable=False, default="in_queue"

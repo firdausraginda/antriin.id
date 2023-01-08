@@ -1,6 +1,6 @@
 from src.lib.model_v2 import Admin, Organization, SuperAdmin, Queue, QueueUser, User
 from typing import List
-from sqlmodel import select
+from sqlmodel import select, col
 
 
 class DBPostgreFunctionality:
@@ -26,7 +26,7 @@ class DBPostgreFunctionality:
 
     def get_admin_using_admin_email(self, admin_email: str) -> Admin:
 
-        return Admin.query.filter_by(email=admin_email).first()
+        return select(Admin).where(Admin.email == admin_email)
 
     def get_admin_using_org_id(self, org_id: str) -> List[Admin]:
         """get admin data using organization id"""
@@ -54,64 +54,48 @@ class DBPostgreFunctionality:
 
     def get_queue_using_list_queue_user(self, list_queue_user: list) -> Queue:
 
-        return Queue.query.filter(
-            Queue.id.in_([queue_user.queue_id for queue_user in list_queue_user])
-        ).all()
+        return select(Queue).where(
+            col(Queue.id).in_([queue_user.queue_id for queue_user in list_queue_user])
+        )
 
     def get_queue_using_list_queue_user_and_queue_id(
         self, list_queue_user: list, queue_id: int
     ) -> Queue:
 
-        return Queue.query.filter(
-            Queue.id.in_([queue_user.queue_id for queue_user in list_queue_user]),
+        return select(Queue).where(
+            col(Queue.id).in_([queue_user.queue_id for queue_user in list_queue_user]),
             Queue.id == queue_id,
-        ).first()
+        )
 
     def get_queue_using_admin_id(self, admin_id: int) -> List[Queue]:
 
-        return Queue.query.filter_by(admin_id=admin_id).all()
+        return select(Queue).where(Queue.admin_id == admin_id)
+
+    def get_queue_using_short_url(self, short_url: str) -> Queue:
+
+        return select(Queue).where(Queue.short_url == short_url)
 
     def get_queue_using_admin_id_and_queue_id(
         self, queue_id: int, admin_id: int
     ) -> Queue:
 
-        return Queue.query.filter_by(admin_id=admin_id, id=queue_id).first()
+        return select(Queue).where(Queue.admin_id == admin_id, Queue.id == queue_id)
 
     def get_queue_in_list_by_user(self, list_queue_user: list, queue_id: int):
 
-        queue_result = (
+        return (
             self.get_queue_using_list_queue_user_and_queue_id(list_queue_user, queue_id)
             if queue_id
             else self.get_queue_using_list_queue_user(list_queue_user)
         )
 
-        # convert query result to list
-        queue_list = []
-        if queue_result:
-            if isinstance(queue_result, list):
-                queue_list = queue_list + queue_result
-            else:
-                queue_list.append(queue_result)
-
-        return queue_list
-
     def get_queue_in_list_by_admin(self, queue_id: int, admin_id: int) -> list:
 
-        queue_result = (
+        return (
             self.get_queue_using_admin_id_and_queue_id(queue_id, admin_id)
             if queue_id
             else self.get_queue_using_admin_id(admin_id)
         )
-
-        # convert query result to list
-        queue_list = []
-        if queue_result:
-            if isinstance(queue_result, list):
-                queue_list = queue_list + queue_result
-            else:
-                queue_list.append(queue_result)
-
-        return queue_list
 
     def get_user_using_user_id(self, user_id: int) -> User:
 
@@ -119,7 +103,7 @@ class DBPostgreFunctionality:
 
     def get_user_using_user_email(self, user_email: str) -> User:
 
-        return User.query.filter_by(email=user_email).first()
+        return select(User).where(User.email == user_email)
 
     def get_user_using_queue_user(self, queue_user_result: list) -> List[User]:
 
@@ -156,7 +140,7 @@ class DBPostgreFunctionality:
 
     def get_queue_user_using_user_id(self, user_id: int) -> QueueUser:
 
-        return QueueUser.query.filter_by(user_id=user_id).all()
+        return select(QueueUser).where(QueueUser.user_id == user_id)
 
     def get_queue_user_using_list_queue(self, list_queue: list) -> QueueUser:
 
