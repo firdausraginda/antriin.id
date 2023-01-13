@@ -65,11 +65,11 @@ class Queue(SQLModel, table=True):
 
 class User(SQLModel, table=True):
     __tablename__ = "user"
-    id: int = Field(primary_key=True)
+    id: Optional[int] = Field(primary_key=True)
     name: str = Field(nullable=False)
     email: str = Field(nullable=False, unique=True)
     password: str = Field(nullable=False)
-    created_at: datetime = Field(default=datetime.now())
+    created_at: Optional[datetime] = Field(default=datetime.now())
 
     queueusers: List["QueueUser"] = Relationship(back_populates="user")
 

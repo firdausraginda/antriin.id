@@ -11,50 +11,66 @@ from src.lib.custom_exception import NotFoundError
 from src.lib.function import convert_model_to_dict
 from src.functionality.db_postgre_functionality import DBPostgreFunctionality
 from sqlalchemy.exc import IntegrityError
+from sqlmodel import Session
 
 
 class UserUsecase:
     def __init__(self, db_postgre_functionality: DBPostgreFunctionality) -> None:
         self._db_postgre_functionality = db_postgre_functionality
+        self._engine = self._db_postgre_functionality._engine
 
     def get_user_by_admin(self, admin_email: str, user_id: int) -> dict:
 
-        admin_result = self._db_postgre_functionality.get_admin_using_admin_email(
-            admin_email
-        )
+        session = Session(self._engine)
 
-        queue_result = self._db_postgre_functionality.get_queue_using_admin_id(
-            admin_result.id
-        )
+        admin_result = session.exec(
+            self._db_postgre_functionality.get_admin_using_admin_email(admin_email)
+        ).first()
 
-        queue_user_result = (
+        queue_result = session.exec(
+            self._db_postgre_functionality.get_queue_using_admin_id(admin_result.id)
+        ).all()
+
+        queue_user_result = session.exec(
             self._db_postgre_functionality.get_queue_user_using_list_queue(queue_result)
-        )
+        ).all()
 
-        user_result = self._db_postgre_functionality.get_user_in_list(
-            queue_user_result, user_id
-        )
+        user_result = session.exec(
+            self._db_postgre_functionality.get_user_in_list(queue_user_result, user_id)
+        ).all()
 
         try:
-            if not queue_result or len(queue_user_result) == 0 or len(user_result) == 0:
+            if (
+                len(queue_result) == 0
+                or len(queue_user_result) == 0
+                or len(user_result) == 0
+            ):
                 raise NotFoundError()
         except NotFoundError as e:
-            db.session.rollback()
+            session.rollback()
             status_code = HTTP_404_NOT_FOUND
             data = f"Error in function 'get_user_by_admin()': {repr(e)}"
         except Exception as e:
-            db.session.rollback()
+            session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'get_user_by_admin()': {repr(e)}"
         else:
             status_code = HTTP_200_OK
             data = [convert_model_to_dict(user) for user in user_result]
+        finally:
+            session.close()
 
         return {"status_code": status_code, "data": data}
 
     def get_user_by_user(self, user_email: str) -> dict:
 
-        user_result = User.query.filter_by(email=user_email).first()
+        session = Session(self._engine)
+
+        user_result = session.exec(
+            self._db_postgre_functionality.get_user_using_user_email(user_email)
+        ).first()
+
+        session.close()
 
         data = convert_model_to_dict(user_result)
         status_code = HTTP_200_OK
@@ -63,84 +79,101 @@ class UserUsecase:
 
     def post_user(self, body_data: dict) -> dict:
 
+        session = Session(self._engine)
+
         try:
-            user = User(
-                name=body_data.get("name"),
-                email=body_data.get("email"),
-                password=body_data.get("password"),
+            user = User.validate(
+                {
+                    "name": body_data.get("name"),
+                    "email": body_data.get("email"),
+                    "password": body_data.get("password"),
+                }
             )
 
-            db.session.add(user)
-            db.session.commit()
+            session.add(user)
+            session.commit()
+            session.refresh(user)
         except IntegrityError as e:
-            db.session.rollback()
+            session.rollback()
             status_code = HTTP_400_BAD_REQUEST
             data = f"Error in function 'post_user_by_admin()': {repr(e)}"
         except Exception as e:
-            db.session.rollback()
+            session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'post_user_by_admin()': {repr(e)}"
         else:
             status_code = HTTP_201_CREATED
             data = convert_model_to_dict(user)
         finally:
-            db.session.close()
+            session.close()
 
         return {"status_code": status_code, "data": data}
 
     def delete_user_by_user(self, user_email: str) -> dict:
 
-        user_result = User.query.filter_by(email=user_email).first()
+        session = Session(self._engine)
+
+        user_result = session.exec(
+            self._db_postgre_functionality.get_user_using_user_email(user_email)
+        ).first()
 
         try:
-            db.session.delete(user_result)
-            db.session.commit()
+            session.delete(user_result)
+            session.commit()
         except IntegrityError as e:
-            db.session.rollback()
+            session.rollback()
             status_code = HTTP_400_BAD_REQUEST
             data = f"Error in function 'delete_user_by_user()': {repr(e)}"
         except NotFoundError as e:
-            db.session.rollback()
+            session.rollback()
             status_code = HTTP_404_NOT_FOUND
             data = f"Error in function 'delete_user_by_user()': {repr(e)}"
         except Exception as e:
-            db.session.rollback()
+            session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'delete_user_by_user()': {repr(e)}"
         else:
             status_code = HTTP_204_NO_CONTENT
             data = None  # if deletion success, didn't return any result
         finally:
-            db.session.close()
+            session.close()
 
         return {"status_code": status_code, "data": data}
 
     def edit_user_by_user(self, user_email: str, body_data: dict) -> dict:
 
-        user_result = User.query.filter_by(email=user_email).first()
+        session = Session(self._engine)
+
+        user_result = session.exec(
+            self._db_postgre_functionality.get_user_using_user_email(user_email)
+        ).first()
 
         try:
-            user_result.name = body_data.get("name")
-            user_result.email = body_data.get("email")
-            user_result.password = body_data.get("password")
+            # update existing queue with updated data
+            [setattr(user_result, key, val) for key, val in body_data.items()]
 
-            db.session.commit()
+            # validate updated queue
+            User.validate({**convert_model_to_dict(user_result)})
+
+            session.add(user_result)
+            session.commit()
+            session.refresh(user_result)
         except IntegrityError as e:
-            db.session.rollback()
+            session.rollback()
             status_code = HTTP_400_BAD_REQUEST
             data = f"Error in function 'edit_user_by_user()': {repr(e)}"
         except NotFoundError as e:
-            db.session.rollback()
+            session.rollback()
             status_code = HTTP_404_NOT_FOUND
             data = f"Error in function 'edit_user_by_user()': {repr(e)}"
         except Exception as e:
-            db.session.rollback()
+            session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'edit_user_by_user()': {repr(e)}"
         else:
             status_code = HTTP_200_OK
             data = convert_model_to_dict(user_result)
         finally:
-            db.session.close()
+            session.close()
 
         return {"status_code": status_code, "data": data}
