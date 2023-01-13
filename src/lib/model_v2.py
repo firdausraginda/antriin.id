@@ -81,12 +81,12 @@ class QueueUserStatus(str, enum.Enum):
 
 class QueueUser(SQLModel, table=True):
     __tablename__ = "queue_user"
-    id: int = Field(primary_key=True)
+    id: Optional[int] = Field(primary_key=True)
     status: QueueUserStatus = Field(
-        sa_column=Column(Enum(QueueUserStatus)), nullable=False, default="in_queue"
+        sa_column=Column(Enum(QueueUserStatus)), default=QueueUserStatus.in_queue
     )
-    created_at: datetime = Field(default=datetime.now())
-    updated_at: datetime = Field(default=datetime.now())
+    created_at: Optional[datetime] = Field(default=datetime.now())
+    updated_at: Optional[datetime] = Field(default=datetime.now())
     queue_id: int = Field(foreign_key="queue.id", nullable=False)
     user_id: int = Field(foreign_key="user.id", nullable=False)
 

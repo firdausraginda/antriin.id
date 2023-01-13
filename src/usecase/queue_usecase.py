@@ -45,6 +45,8 @@ class QueueUsecase:
         else:
             status_code = HTTP_200_OK
             data = [convert_model_to_dict(queue) for queue in queue_result]
+        finally:
+            session.close()
 
         return {"status_code": status_code, "data": data}
 
@@ -78,6 +80,8 @@ class QueueUsecase:
         else:
             status_code = HTTP_200_OK
             data = [convert_model_to_dict(queue) for queue in queue_result]
+        finally:
+            session.close()
 
         return {"status_code": status_code, "data": data}
 

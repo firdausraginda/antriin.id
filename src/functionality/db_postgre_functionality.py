@@ -49,8 +49,9 @@ class DBPostgreFunctionality:
         )
 
     def get_queue_using_queue_id(self, queue_id: int) -> Queue:
+        """get queue using queue_id"""
 
-        return Queue.query.filter_by(id=queue_id).first()
+        return select(Queue).where(Queue.id == queue_id)
 
     def get_queue_using_list_queue_user(self, list_queue_user: list) -> Queue:
 
@@ -98,8 +99,9 @@ class DBPostgreFunctionality:
         )
 
     def get_user_using_user_id(self, user_id: int) -> User:
+        """get user using user_id"""
 
-        return User.query.filter_by(id=user_id).first()
+        return select(User).where(User.id == user_id)
 
     def get_user_using_user_email(self, user_email: str) -> User:
 
@@ -151,36 +153,31 @@ class DBPostgreFunctionality:
     def get_queue_user_using_queue_id_and_user_id(
         self, queue_id: int, user_id: int
     ) -> QueueUser:
+        """get queue user using queue_id and user_id"""
 
-        return QueueUser.query.filter_by(queue_id=queue_id, user_id=user_id).first()
+        return select(QueueUser).where(
+            QueueUser.queue_id == queue_id, QueueUser.user_id == user_id
+        )
 
     def get_queue_user_using_list_queue_and_queue_user_id(
         self, list_queue: list, queue_user_id: int
     ) -> QueueUser:
+        """get queue user using list of queue and queue_user_id"""
 
-        return QueueUser.query.filter(
-            QueueUser.queue_id.in_([queue.id for queue in list_queue]),
+        return select(QueueUser).where(
+            col(QueueUser.queue_id).in_([queue.id for queue in list_queue]),
             QueueUser.id == queue_user_id,
-        ).first()
+        )
 
     def get_queue_user_in_list(
         self, list_queue: list, queue_user_id: int
     ) -> List[QueueUser]:
+        """get queue user using list of queue and queue_user_id if any"""
 
-        queue_user_result = (
+        return (
             self.get_queue_user_using_list_queue_and_queue_user_id(
                 list_queue, queue_user_id
             )
             if queue_user_id
             else self.get_queue_user_using_list_queue(list_queue)
         )
-
-        # convert query result to list
-        queue_user_list = []
-        if queue_user_result:
-            if isinstance(queue_user_result, list):
-                queue_user_list = queue_user_list + queue_user_result
-            else:
-                queue_user_list.append(queue_user_result)
-
-        return queue_user_list
