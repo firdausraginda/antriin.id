@@ -44,9 +44,11 @@ class AdminUsecase:
             if not org_result or len(admin_result) == 0:
                 raise NotFoundError()
         except NotFoundError as e:
+            session.rollback()
             status_code = HTTP_404_NOT_FOUND
             data = f"Error in function 'get_admin()': {repr(e)}"
         except Exception as e:
+            session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'get_admin()': {repr(e)}"
         else:
@@ -89,11 +91,13 @@ class AdminUsecase:
 
             session.add(admin)
             session.commit()
-            session.flush()
+            session.refresh(admin)
         except IntegrityError as e:
+            session.rollback()
             status_code = HTTP_400_BAD_REQUEST
             data = f"Error in function 'post_admin()': {repr(e)}"
         except Exception as e:
+            session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'post_admin()': {repr(e)}"
         else:
@@ -133,14 +137,16 @@ class AdminUsecase:
 
             session.delete(admin_result)
             session.commit()
-            session.flush()
         except IntegrityError as e:
+            session.rollback()
             status_code = HTTP_400_BAD_REQUEST
             data = f"Error in function 'delete_admin()': {repr(e)}"
         except NotFoundError as e:
+            session.rollback()
             status_code = HTTP_404_NOT_FOUND
             data = f"Error in function 'delete_admin()': {repr(e)}"
         except Exception as e:
+            session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'delete_admin()': {repr(e)}"
         else:
@@ -186,15 +192,19 @@ class AdminUsecase:
             # validate updated admin
             Admin.validate({**convert_model_to_dict(admin_result)})
 
+            session.add(admin_result)
             session.commit()
-            session.flush()
+            session.refresh(admin_result)
         except IntegrityError as e:
+            session.rollback()
             status_code = HTTP_400_BAD_REQUEST
             data = f"Error in function 'edit_admin()': {repr(e)}"
         except NotFoundError as e:
+            session.rollback()
             status_code = HTTP_404_NOT_FOUND
             data = f"Error in function 'edit_admin()': {repr(e)}"
         except Exception as e:
+            session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'edit_admin()': {repr(e)}"
         else:

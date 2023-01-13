@@ -42,9 +42,11 @@ class QueueUsecase:
             if len(queue_result) == 0:
                 raise NotFoundError()
         except NotFoundError as e:
+            session.rollback()
             status_code = HTTP_404_NOT_FOUND
             data = f"Error in function 'get_queue()': {repr(e)}"
         except Exception as e:
+            session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'get_queue()': {repr(e)}"
         else:
@@ -78,9 +80,11 @@ class QueueUsecase:
             if len(queue_user_result) == 0 or len(queue_result) == 0:
                 raise NotFoundError()
         except NotFoundError as e:
+            session.rollback()
             status_code = HTTP_404_NOT_FOUND
             data = f"Error in function 'get_queue_by_user()': {repr(e)}"
         except Exception as e:
+            session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'get_queue_by_user()': {repr(e)}"
         else:
@@ -121,11 +125,13 @@ class QueueUsecase:
 
             session.add(queue)
             session.commit()
-            session.flush()
+            session.refresh(queue)
         except (StatementError, IntegrityError) as e:
+            session.rollback()
             status_code = HTTP_400_BAD_REQUEST
             data = f"Error in function 'post_queue()': {repr(e)}"
         except Exception as e:
+            session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'post_queue()': {repr(e)}"
         else:
@@ -157,14 +163,16 @@ class QueueUsecase:
 
             session.delete(queue_result)
             session.commit()
-            session.flush()
         except IntegrityError as e:
+            session.rollback()
             status_code = HTTP_400_BAD_REQUEST
             data = f"Error in function 'delete_queue()': {repr(e)}"
         except NotFoundError as e:
+            session.rollback()
             status_code = HTTP_404_NOT_FOUND
             data = f"Error in function 'delete_queue()': {repr(e)}"
         except Exception as e:
+            session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'delete_queue()': {repr(e)}"
         else:
@@ -203,14 +211,16 @@ class QueueUsecase:
             session.add(queue_result)
             session.commit()
             session.refresh(queue_result)
-            session.flush()
         except (StatementError, IntegrityError) as e:
+            session.rollback()
             status_code = HTTP_400_BAD_REQUEST
             data = f"Error in function 'edit_queue()': {repr(e)}"
         except NotFoundError as e:
+            session.rollback()
             status_code = HTTP_404_NOT_FOUND
             data = f"Error in function 'edit_queue()': {repr(e)}"
         except Exception as e:
+            session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'edit_queue()': {repr(e)}"
         else:

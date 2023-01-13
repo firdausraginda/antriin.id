@@ -34,9 +34,11 @@ class SuperAdminUsecase:
             if not super_admin_result:
                 raise NotFoundError()
         except NotFoundError as e:
+            session.rollback()
             status_code = HTTP_404_NOT_FOUND
             data = f"Error in function 'get_super_admin()': {repr(e)}"
         except Exception as e:
+            session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'get_super_admin()': {repr(e)}"
         else:
@@ -50,28 +52,29 @@ class SuperAdminUsecase:
     def post_super_admin(self, body_data: dict) -> dict:
         """insert super admin data"""
 
-        super_admin = SuperAdmin.validate(
-            {
-                "name": body_data.get("name"),
-                "email": body_data.get("email"),
-                "password": body_data.get("password"),
-            }
-        )
-
         session = Session(self._engine)
 
         try:
+            super_admin = SuperAdmin.validate(
+                {
+                    "name": body_data.get("name"),
+                    "email": body_data.get("email"),
+                    "password": body_data.get("password"),
+                }
+            )
+
             session.add(super_admin)
+            session.commit()
+            session.refresh(super_admin)
         except IntegrityError as e:
+            session.rollback()
             status_code = HTTP_400_BAD_REQUEST
             data = f"Error in function 'post_super_admin()': {repr(e)}"
         except Exception as e:
+            session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'post_super_admin()': {repr(e)}"
         else:
-            session.commit()
-            session.flush()
-            session.refresh(super_admin)
             status_code = HTTP_201_CREATED
             data = convert_model_to_dict(super_admin)
         finally:
@@ -95,18 +98,20 @@ class SuperAdminUsecase:
                 raise NotFoundError()
 
             session.delete(super_admin_result)
+            session.commit()
         except IntegrityError as e:
+            session.rollback()
             status_code = HTTP_400_BAD_REQUEST
             data = f"Error in function 'delete_super_admin()': {repr(e)}"
         except NotFoundError as e:
+            session.rollback()
             status_code = HTTP_404_NOT_FOUND
             data = f"Error in function 'delete_super_admin()': {repr(e)}"
         except Exception as e:
+            session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'delete_super_admin()': {repr(e)}"
         else:
-            session.commit()
-            session.flush()
             status_code = HTTP_204_NO_CONTENT
             data = None  # if deletion success, didn't return any result
         finally:
@@ -135,15 +140,19 @@ class SuperAdminUsecase:
             # validate updated super admin
             SuperAdmin.validate({**convert_model_to_dict(super_admin_result)})
 
+            session.add(super_admin_result)
             session.commit()
-            session.flush()
+            session.refresh(super_admin_result)
         except IntegrityError as e:
+            session.rollback()
             status_code = HTTP_400_BAD_REQUEST
             data = f"Error in function 'edit_super_admin()': {repr(e)}"
         except NotFoundError as e:
+            session.rollback()
             status_code = HTTP_404_NOT_FOUND
             data = f"Error in function 'edit_super_admin()': {repr(e)}"
         except Exception as e:
+            session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'edit_super_admin()': {repr(e)}"
         else:

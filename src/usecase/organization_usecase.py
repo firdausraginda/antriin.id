@@ -40,9 +40,11 @@ class OrganizationUsecase:
             if not org_result:
                 raise NotFoundError()
         except NotFoundError as e:
+            session.rollback()
             status_code = HTTP_404_NOT_FOUND
             data = f"Error in function 'get_organization()': {repr(e)}"
         except Exception as e:
+            session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'get_organization()': {repr(e)}"
         else:
@@ -75,14 +77,17 @@ class OrganizationUsecase:
         try:
             session.add(organization)
             session.commit()
-            session.flush()
+            session.refresh(organization)
         except NotFoundError as e:
+            session.rollback()
             status_code = HTTP_404_NOT_FOUND
             data = f"Error in function 'post_organization()': {repr(e)}"
         except IntegrityError as e:
+            session.rollback()
             status_code = HTTP_400_BAD_REQUEST
             data = f"Error in function 'post_organization()': {repr(e)}"
         except Exception as e:
+            session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'post_organization()': {repr(e)}"
         else:
@@ -116,14 +121,16 @@ class OrganizationUsecase:
 
             session.delete(org_result)
             session.commit()
-            session.flush()
         except IntegrityError as e:
+            session.rollback()
             status_code = HTTP_400_BAD_REQUEST
             data = f"Error in function 'delete_organization()': {repr(e)}"
         except NotFoundError as e:
+            session.rollback()
             status_code = HTTP_404_NOT_FOUND
             data = f"Error in function 'delete_organization()': {repr(e)}"
         except Exception as e:
+            session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'delete_organization()': {repr(e)}"
         else:
@@ -161,15 +168,19 @@ class OrganizationUsecase:
             # validate updated organization
             Organization.validate({**convert_model_to_dict(org_result)})
 
+            session.add(org_result)
             session.commit()
-            session.flush()
+            session.refresh(org_result)
         except IntegrityError as e:
+            session.rollback()
             status_code = HTTP_400_BAD_REQUEST
             data = f"Error in function 'edit_organization()': {repr(e)}"
         except NotFoundError as e:
+            session.rollback()
             status_code = HTTP_404_NOT_FOUND
             data = f"Error in function 'edit_organization()': {repr(e)}"
         except Exception as e:
+            session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'edit_organization()': {repr(e)}"
         else:

@@ -8,7 +8,7 @@ from src.lib.custom_exception import (
     HTTP_500_INTERNAL_SERVER_ERROR,
 )
 from src.lib.custom_exception import NotFoundError, DuplicateItemByForeignKey
-from src.lib.function import convert_model_to_dict
+from src.lib.function import convert_model_to_dict, update_existing_data
 from src.functionality.db_postgre_functionality import DBPostgreFunctionality
 from sqlalchemy.exc import IntegrityError, StatementError
 from sqlmodel import Session
@@ -114,6 +114,8 @@ class QueueUserUsecase:
                     raise DuplicateItemByForeignKey()
 
             session.add(queue_user)
+            session.commit()
+            session.refresh(queue_user)
         except NotFoundError as e:
             session.rollback()
             status_code = HTTP_404_NOT_FOUND
@@ -127,8 +129,6 @@ class QueueUserUsecase:
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'post_queue_user_by_admin()': {repr(e)}"
         else:
-            session.commit()
-            session.refresh(queue_user)
             status_code = HTTP_201_CREATED
             data = convert_model_to_dict(queue_user)
         finally:
@@ -166,6 +166,8 @@ class QueueUserUsecase:
             )
 
             session.add(queue_user)
+            session.commit()
+            session.refresh(queue_user)
         except NotFoundError as e:
             session.rollback()
             status_code = HTTP_404_NOT_FOUND
@@ -179,8 +181,6 @@ class QueueUserUsecase:
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'post_queue_user_by_user()': {repr(e)}"
         else:
-            session.commit()
-            session.refresh(queue_user)
             status_code = HTTP_201_CREATED
             data = convert_model_to_dict(queue_user)
         finally:
@@ -212,6 +212,7 @@ class QueueUserUsecase:
                 raise NotFoundError()
 
             session.delete(queue_user_result)
+            session.commit()
         except IntegrityError as e:
             session.rollback()
             status_code = HTTP_400_BAD_REQUEST
@@ -225,7 +226,6 @@ class QueueUserUsecase:
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'delete_queue_user()': {repr(e)}"
         else:
-            session.commit()
             status_code = HTTP_204_NO_CONTENT
             data = None  # if deletion success, didn't return any result
         finally:
@@ -262,12 +262,14 @@ class QueueUserUsecase:
                     raise NotFoundError()
 
             # update existing queue user with updated data
-            [setattr(queue_user_result, key, val) for key, val in body_data.items()]
+            update_existing_data(queue_user_result, body_data)
 
             # validate updated queue user
             QueueUser.validate({**convert_model_to_dict(queue_user_result)})
 
             session.add(queue_user_result)
+            session.commit()
+            session.refresh(queue_user_result)
         except (StatementError, IntegrityError) as e:
             session.rollback()
             status_code = HTTP_400_BAD_REQUEST
@@ -281,8 +283,6 @@ class QueueUserUsecase:
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
             data = f"Error in function 'edit_queue_user()': {repr(e)}"
         else:
-            session.commit()
-            session.refresh(queue_user_result)
             status_code = HTTP_200_OK
             data = convert_model_to_dict(queue_user_result)
         finally:
