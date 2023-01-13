@@ -149,17 +149,17 @@ class QueueUserUsecase:
             self._db_postgre_functionality.get_user_using_user_email(user_email)
         ).first()
 
-        queue_user_result = session.exec(
-            self._db_postgre_functionality.get_queue_user_using_queue_id_and_user_id(
-                queue_result.id, user_result.id
-            )
-        ).first()
-
         try:
             if not queue_result or not user_result:
                 raise NotFoundError()
-            elif queue_user_result:
-                raise DuplicateItemByForeignKey()
+            else:
+                queue_user_result = session.exec(
+                    self._db_postgre_functionality.get_queue_user_using_queue_id_and_user_id(
+                        queue_result.id, user_result.id
+                    )
+                ).first()
+                if queue_user_result:
+                    raise DuplicateItemByForeignKey()
 
             queue_user = QueueUser.validate(
                 {"queue_id": queue_id, "user_id": user_result.id}
