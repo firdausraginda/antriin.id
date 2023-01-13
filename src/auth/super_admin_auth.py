@@ -5,6 +5,7 @@ from sqlmodel import Session
 
 
 def super_admin_auth(db_postgre_functionality: DBPostgreFunctionality):
+    """authorize super admin using email & password"""
 
     auth_super_admin = HTTPBasicAuth()
     engine = db_postgre_functionality._engine

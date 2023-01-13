@@ -20,6 +20,7 @@ class OrganizationUsecase:
         self._engine = self._db_postgre_functionality._engine
 
     def get_organization(self, super_admin_email: str) -> dict:
+        """get organization data per super_admin_email"""
 
         session = Session(self._engine)
 
@@ -53,6 +54,7 @@ class OrganizationUsecase:
         return {"status_code": status_code, "data": data}
 
     def post_organization(self, super_admin_email: str, body_data: dict) -> dict:
+        """insert organization data"""
 
         session = Session(self._engine)
 
@@ -90,6 +92,7 @@ class OrganizationUsecase:
         return {"status_code": status_code, "data": data}
 
     def delete_organization(self, super_admin_email: str) -> dict:
+        """delete organization data using super_admin_email"""
 
         session = Session(self._engine)
 
@@ -130,6 +133,7 @@ class OrganizationUsecase:
         return {"status_code": status_code, "data": data}
 
     def edit_organization(self, super_admin_email: str, body_data: dict) -> dict:
+        """edit organization data using super_admin_email"""
 
         session = Session(self._engine)
 

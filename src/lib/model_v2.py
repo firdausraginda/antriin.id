@@ -49,14 +49,14 @@ class QueueStatus(str, enum.Enum):
 class Queue(SQLModel, table=True):
     __tablename__ = "queue"
     id: Optional[int] = Field(primary_key=True)
-    name: str = Field(nullable=False)
+    name: str = Field(nullable=False, unique=True)
     created_at: Optional[datetime] = Field(default=datetime.now())
     updated_at: Optional[datetime] = Field(default=datetime.now())
     description: str = Field(nullable=True)
     status: QueueStatus = Field(
         sa_column=Column(Enum(QueueStatus)), default=QueueStatus.off
     )
-    short_url: str = Field(nullable=False)
+    short_url: str = Field(nullable=False, unique=True)
     admin_id: int = Field(foreign_key="admin.id", nullable=False)
 
     admin: Admin = Relationship(back_populates="queues")

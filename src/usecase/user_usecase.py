@@ -20,6 +20,7 @@ class UserUsecase:
         self._engine = self._db_postgre_functionality._engine
 
     def get_user_by_admin(self, admin_email: str, user_id: int) -> dict:
+        """get user data using admin_email and user_id by admin"""
 
         session = Session(self._engine)
 
@@ -63,6 +64,7 @@ class UserUsecase:
         return {"status_code": status_code, "data": data}
 
     def get_user_by_user(self, user_email: str) -> dict:
+        """get user data using user_email by user"""
 
         session = Session(self._engine)
 
@@ -78,6 +80,7 @@ class UserUsecase:
         return {"status_code": status_code, "data": data}
 
     def post_user(self, body_data: dict) -> dict:
+        """insert user data"""
 
         session = Session(self._engine)
 
@@ -110,6 +113,7 @@ class UserUsecase:
         return {"status_code": status_code, "data": data}
 
     def delete_user_by_user(self, user_email: str) -> dict:
+        """delete user data using user_email by user"""
 
         session = Session(self._engine)
 
@@ -141,6 +145,7 @@ class UserUsecase:
         return {"status_code": status_code, "data": data}
 
     def edit_user_by_user(self, user_email: str, body_data: dict) -> dict:
+        """edit user data using user_email by user"""
 
         session = Session(self._engine)
 

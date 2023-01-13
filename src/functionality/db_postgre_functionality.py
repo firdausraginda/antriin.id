@@ -42,6 +42,7 @@ class DBPostgreFunctionality:
         )
 
     def get_admin_in_list(self, org_id: str, admin_id: int) -> Admin:
+        """get list of admin using organization_id and admin_id if any"""
 
         return (
             self.get_admin_using_org_id_and_admin_id(org_id, admin_id)
@@ -55,6 +56,7 @@ class DBPostgreFunctionality:
         return select(Queue).where(Queue.id == queue_id)
 
     def get_queue_using_list_queue_user(self, list_queue_user: list) -> Queue:
+        """get queue using list of queue user"""
 
         return select(Queue).where(
             col(Queue.id).in_([queue_user.queue_id for queue_user in list_queue_user])
@@ -63,6 +65,7 @@ class DBPostgreFunctionality:
     def get_queue_using_list_queue_user_and_queue_id(
         self, list_queue_user: list, queue_id: int
     ) -> Queue:
+        """get queue using list of queue user and queue_id"""
 
         return select(Queue).where(
             col(Queue.id).in_([queue_user.queue_id for queue_user in list_queue_user]),
@@ -75,6 +78,7 @@ class DBPostgreFunctionality:
         return select(Queue).where(Queue.admin_id == admin_id)
 
     def get_queue_using_short_url(self, short_url: str) -> Queue:
+        """get queue using short_url"""
 
         return select(Queue).where(Queue.short_url == short_url)
 
@@ -86,6 +90,7 @@ class DBPostgreFunctionality:
         return select(Queue).where(Queue.admin_id == admin_id, Queue.id == queue_id)
 
     def get_queue_in_list_by_user(self, list_queue_user: list, queue_id: int) -> Queue:
+        """get list of queue using list of queue user and queue_id if any"""
 
         return (
             self.get_queue_using_list_queue_user_and_queue_id(list_queue_user, queue_id)
@@ -94,6 +99,7 @@ class DBPostgreFunctionality:
         )
 
     def get_queue_in_list_by_admin(self, queue_id: int, admin_id: int) -> Queue:
+        """get list of queue using admin_id and queue_id if any"""
 
         return (
             self.get_queue_using_admin_id_and_queue_id(queue_id, admin_id)
@@ -114,9 +120,6 @@ class DBPostgreFunctionality:
     def get_user_using_queue_user(self, queue_user_result: list) -> User:
         """get user using list of queue user"""
 
-        # return User.query.filter(
-        #     User.id.in_([queue_user.user_id for queue_user in queue_user_result])
-        # ).all()
         return select(User).where(
             col(User.id).in_([queue_user.user_id for queue_user in queue_user_result])
         )
@@ -126,10 +129,6 @@ class DBPostgreFunctionality:
     ) -> User:
         """get user using list of queue user and user_id"""
 
-        # return User.query.filter(
-        #     User.id.in_([queue_user.user_id for queue_user in queue_user_result]),
-        #     User.id == user_id,
-        # ).first()
         return select(User).where(
             col(User.id).in_([queue_user.user_id for queue_user in queue_user_result]),
             User.id == user_id,
@@ -145,6 +144,7 @@ class DBPostgreFunctionality:
         )
 
     def get_queue_user_using_user_id(self, user_id: int) -> QueueUser:
+        """get queue user using user_id"""
 
         return select(QueueUser).where(QueueUser.user_id == user_id)
 

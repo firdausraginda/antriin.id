@@ -20,6 +20,7 @@ class QueueUserUsecase:
         self._engine = self._db_postgre_functionality._engine
 
     def get_queue_by_admin(self, admin_email: str, queue_user_id: int) -> dict:
+        """get queue data using admin_email and queue_user_id"""
 
         session = Session(self._engine)
 
@@ -59,6 +60,7 @@ class QueueUserUsecase:
         return {"status_code": status_code, "data": data}
 
     def post_queue_user_by_admin(self, admin_email: str, body_data: dict) -> dict:
+        """insert queue user data by admin"""
 
         session = Session(self._engine)
 
@@ -135,6 +137,7 @@ class QueueUserUsecase:
         return {"status_code": status_code, "data": data}
 
     def post_queue_user_by_user(self, queue_id: int, user_email: str) -> dict:
+        """insert queue user data by user"""
 
         session = Session(self._engine)
 
@@ -186,6 +189,7 @@ class QueueUserUsecase:
         return {"status_code": status_code, "data": data}
 
     def delete_queue_user(self, admin_email: str, queue_user_id: int) -> dict:
+        """delete queue user data using admin_email and queue_user_id"""
 
         session = Session(self._engine)
 
@@ -232,6 +236,7 @@ class QueueUserUsecase:
     def edit_queue_user(
         self, admin_email: str, queue_user_id: int, body_data: dict
     ) -> dict:
+        """edit queue user data using admin_email and queue_user_id"""
 
         session = Session(self._engine)
 

@@ -13,5 +13,6 @@ def convert_model_to_dict(query_result) -> dict:
 
 
 def generate_short_url() -> str:
+    """generate 5 random string as short_url"""
 
     return "".join(random.choices(string.ascii_letters, k=5))

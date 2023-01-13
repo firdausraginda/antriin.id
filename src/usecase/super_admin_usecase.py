@@ -20,6 +20,7 @@ class SuperAdminUsecase:
         self._engine = self._db_postgre_functionality._engine
 
     def get_super_admin(self, super_admin_id: int) -> dict:
+        """get super admin data using super_admin_id"""
 
         session = Session(self._engine)
 
@@ -47,6 +48,7 @@ class SuperAdminUsecase:
         return {"status_code": status_code, "data": data}
 
     def post_super_admin(self, body_data: dict) -> dict:
+        """insert super admin data"""
 
         super_admin = SuperAdmin(
             name=body_data.get("name"),
@@ -76,6 +78,7 @@ class SuperAdminUsecase:
         return {"status_code": status_code, "data": data}
 
     def delete_super_admin(self, super_admin_id: int) -> dict:
+        """delete super admin data using super_admin_id"""
 
         session = Session(self._engine)
 
@@ -110,6 +113,7 @@ class SuperAdminUsecase:
         return {"status_code": status_code, "data": data}
 
     def edit_super_admin(self, super_admin_id: int, body_data: dict) -> dict:
+        """edit super admin data using super_admin_id and body_data"""
 
         session = Session(self._engine)
 

@@ -20,6 +20,7 @@ class AdminUsecase:
         self._engine = self._db_postgre_functionality._engine
 
     def get_admin(self, super_admin_email: str, admin_id: int) -> dict:
+        """get admin data using super_admin_email and admin_id"""
 
         session = Session(self._engine)
 
@@ -57,6 +58,7 @@ class AdminUsecase:
         return {"status_code": status_code, "data": data}
 
     def post_admin(self, super_admin_email: str, body_data: dict) -> dict:
+        """insert admin data using"""
 
         session = Session(self._engine)
 
@@ -101,6 +103,7 @@ class AdminUsecase:
         return {"status_code": status_code, "data": data}
 
     def delete_admin(self, super_admin_email: str, admin_id: int) -> dict:
+        """delete admin data using super_admin_email and admin_id"""
 
         session = Session(self._engine)
 
@@ -149,6 +152,7 @@ class AdminUsecase:
     def edit_admin(
         self, super_admin_email: str, admin_id: int, body_data: dict
     ) -> dict:
+        """edit admin data using super_admin_email and admin_id"""
 
         session = Session(self._engine)
 

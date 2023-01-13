@@ -5,6 +5,7 @@ from sqlmodel import Session
 
 
 def user_auth(db_postgre_functionality: DBPostgreFunctionality):
+    """authorize user using email & password"""
 
     auth_user = HTTPBasicAuth()
     engine = db_postgre_functionality._engine
