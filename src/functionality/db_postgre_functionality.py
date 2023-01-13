@@ -1,5 +1,5 @@
 from src.lib.model_v2 import Admin, Organization, SuperAdmin, Queue, QueueUser, User
-from typing import List
+from sqlmodel import Session
 from sqlmodel import select, col
 
 
@@ -8,6 +8,11 @@ class DBPostgreFunctionality:
 
     def __init__(self, engine) -> None:
         self._engine = engine
+
+    def start_session(self):
+        """initiate session to database"""
+
+        return Session(self._engine)
 
     def get_super_admin_using_email(self, super_admin_email: str) -> SuperAdmin:
         """get super admin data using email"""

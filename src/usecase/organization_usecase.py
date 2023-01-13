@@ -17,12 +17,11 @@ from sqlmodel import Session
 class OrganizationUsecase:
     def __init__(self, db_postgre_functionality: DBPostgreFunctionality) -> None:
         self._db_postgre_functionality = db_postgre_functionality
-        self._engine = self._db_postgre_functionality._engine
 
     def get_organization(self, super_admin_email: str) -> dict:
         """get organization data per super_admin_email"""
 
-        session = Session(self._engine)
+        session = self._db_postgre_functionality.start_session()
 
         super_admin_result = session.exec(
             self._db_postgre_functionality.get_super_admin_using_email(
@@ -58,7 +57,7 @@ class OrganizationUsecase:
     def post_organization(self, super_admin_email: str, body_data: dict) -> dict:
         """insert organization data"""
 
-        session = Session(self._engine)
+        session = self._db_postgre_functionality.start_session()
 
         super_admin_result = session.exec(
             self._db_postgre_functionality.get_super_admin_using_email(
@@ -101,7 +100,7 @@ class OrganizationUsecase:
     def delete_organization(self, super_admin_email: str) -> dict:
         """delete organization data using super_admin_email"""
 
-        session = Session(self._engine)
+        session = self._db_postgre_functionality.start_session()
 
         super_admin_result = session.exec(
             self._db_postgre_functionality.get_super_admin_using_email(
@@ -144,7 +143,7 @@ class OrganizationUsecase:
     def edit_organization(self, super_admin_email: str, body_data: dict) -> dict:
         """edit organization data using super_admin_email"""
 
-        session = Session(self._engine)
+        session = self._db_postgre_functionality.start_session()
 
         super_admin_result = session.exec(
             self._db_postgre_functionality.get_super_admin_using_email(

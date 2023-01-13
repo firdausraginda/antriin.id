@@ -21,12 +21,11 @@ from sqlmodel import Session
 class QueueUsecase:
     def __init__(self, db_postgre_functionality: DBPostgreFunctionality) -> None:
         self._db_postgre_functionality = db_postgre_functionality
-        self._engine = self._db_postgre_functionality._engine
 
     def get_queue_by_admin(self, admin_email: str, queue_id: int) -> dict:
         """get queue data using admin_email and queue_id"""
 
-        session = Session(self._engine)
+        session = self._db_postgre_functionality.start_session()
 
         admin_result = session.exec(
             self._db_postgre_functionality.get_admin_using_admin_email(admin_email)
@@ -60,7 +59,7 @@ class QueueUsecase:
     def get_queue_by_user(self, user_email: str, queue_id: int) -> dict:
         """get queue data using user_email and queue_id"""
 
-        session = Session(self._engine)
+        session = self._db_postgre_functionality.start_session()
 
         user_result = session.exec(
             self._db_postgre_functionality.get_user_using_user_email(user_email)
@@ -98,7 +97,7 @@ class QueueUsecase:
     def post_queue(self, admin_email: str, body_data: dict) -> dict:
         """insert queue data"""
 
-        session = Session(self._engine)
+        session = self._db_postgre_functionality.start_session()
 
         admin_result = session.exec(
             self._db_postgre_functionality.get_admin_using_admin_email(admin_email)
@@ -145,7 +144,7 @@ class QueueUsecase:
     def delete_queue(self, admin_email: str, queue_id: int) -> dict:
         """delete queue data using admin_email and queue_id"""
 
-        session = Session(self._engine)
+        session = self._db_postgre_functionality.start_session()
 
         admin_result = session.exec(
             self._db_postgre_functionality.get_admin_using_admin_email(admin_email)
@@ -186,7 +185,7 @@ class QueueUsecase:
     def edit_queue(self, admin_email: str, queue_id: int, body_data: dict) -> dict:
         """edit queue data using admin_email and queue_id"""
 
-        session = Session(self._engine)
+        session = self._db_postgre_functionality.start_session()
 
         admin_result = session.exec(
             self._db_postgre_functionality.get_admin_using_admin_email(admin_email)

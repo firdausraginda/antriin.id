@@ -17,12 +17,11 @@ from sqlmodel import Session
 class UserUsecase:
     def __init__(self, db_postgre_functionality: DBPostgreFunctionality) -> None:
         self._db_postgre_functionality = db_postgre_functionality
-        self._engine = self._db_postgre_functionality._engine
 
     def get_user_by_admin(self, admin_email: str, user_id: int) -> dict:
         """get user data using admin_email and user_id by admin"""
 
-        session = Session(self._engine)
+        session = self._db_postgre_functionality.start_session()
 
         admin_result = session.exec(
             self._db_postgre_functionality.get_admin_using_admin_email(admin_email)
@@ -66,7 +65,7 @@ class UserUsecase:
     def get_user_by_user(self, user_email: str) -> dict:
         """get user data using user_email by user"""
 
-        session = Session(self._engine)
+        session = self._db_postgre_functionality.start_session()
 
         user_result = session.exec(
             self._db_postgre_functionality.get_user_using_user_email(user_email)
@@ -82,7 +81,7 @@ class UserUsecase:
     def post_user(self, body_data: dict) -> dict:
         """insert user data"""
 
-        session = Session(self._engine)
+        session = self._db_postgre_functionality.start_session()
 
         try:
             user = User.validate(
@@ -115,7 +114,7 @@ class UserUsecase:
     def delete_user_by_user(self, user_email: str) -> dict:
         """delete user data using user_email by user"""
 
-        session = Session(self._engine)
+        session = self._db_postgre_functionality.start_session()
 
         user_result = session.exec(
             self._db_postgre_functionality.get_user_using_user_email(user_email)
@@ -147,7 +146,7 @@ class UserUsecase:
     def edit_user_by_user(self, user_email: str, body_data: dict) -> dict:
         """edit user data using user_email by user"""
 
-        session = Session(self._engine)
+        session = self._db_postgre_functionality.start_session()
 
         user_result = session.exec(
             self._db_postgre_functionality.get_user_using_user_email(user_email)

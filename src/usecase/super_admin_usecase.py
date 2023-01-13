@@ -17,12 +17,11 @@ from sqlmodel import Session
 class SuperAdminUsecase:
     def __init__(self, db_postgre_functionality: DBPostgreFunctionality) -> None:
         self._db_postgre_functionality = db_postgre_functionality
-        self._engine = self._db_postgre_functionality._engine
 
     def get_super_admin(self, super_admin_id: int) -> dict:
         """get super admin data using super_admin_id"""
 
-        session = Session(self._engine)
+        session = self._db_postgre_functionality.start_session()
 
         super_admin_result = session.exec(
             self._db_postgre_functionality.get_super_admin_using_super_admin_id(
@@ -52,7 +51,7 @@ class SuperAdminUsecase:
     def post_super_admin(self, body_data: dict) -> dict:
         """insert super admin data"""
 
-        session = Session(self._engine)
+        session = self._db_postgre_functionality.start_session()
 
         try:
             super_admin = SuperAdmin.validate(
@@ -85,7 +84,7 @@ class SuperAdminUsecase:
     def delete_super_admin(self, super_admin_id: int) -> dict:
         """delete super admin data using super_admin_id"""
 
-        session = Session(self._engine)
+        session = self._db_postgre_functionality.start_session()
 
         super_admin_result = session.exec(
             self._db_postgre_functionality.get_super_admin_using_super_admin_id(
@@ -122,7 +121,7 @@ class SuperAdminUsecase:
     def edit_super_admin(self, super_admin_id: int, body_data: dict) -> dict:
         """edit super admin data using super_admin_id and body_data"""
 
-        session = Session(self._engine)
+        session = self._db_postgre_functionality.start_session()
 
         super_admin_result = session.exec(
             self._db_postgre_functionality.get_super_admin_using_super_admin_id(
