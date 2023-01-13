@@ -261,10 +261,10 @@ class QueueUserUsecase:
                 if not queue_user_result:
                     raise NotFoundError()
 
-            # update existing queue with updated data
+            # update existing queue user with updated data
             [setattr(queue_user_result, key, val) for key, val in body_data.items()]
 
-            # validate updated queue
+            # validate updated queue user
             QueueUser.validate({**convert_model_to_dict(queue_user_result)})
 
             session.add(queue_user_result)

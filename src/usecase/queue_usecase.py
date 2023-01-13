@@ -8,7 +8,11 @@ from src.lib.custom_exception import (
     HTTP_500_INTERNAL_SERVER_ERROR,
 )
 from src.lib.custom_exception import NotFoundError
-from src.lib.function import convert_model_to_dict, generate_short_url
+from src.lib.function import (
+    convert_model_to_dict,
+    generate_short_url,
+    update_existing_data,
+)
 from src.functionality.db_postgre_functionality import DBPostgreFunctionality
 from sqlalchemy.exc import IntegrityError, StatementError
 from sqlmodel import Session
@@ -191,7 +195,7 @@ class QueueUsecase:
                 raise NotFoundError()
 
             # update existing queue with updated data
-            [setattr(queue_result, key, val) for key, val in body_data.items()]
+            update_existing_data(queue_result, body_data)
 
             # validate updated queue
             Queue.validate({**convert_model_to_dict(queue_result)})

@@ -8,7 +8,7 @@ from src.lib.custom_exception import (
     HTTP_500_INTERNAL_SERVER_ERROR,
 )
 from src.lib.custom_exception import NotFoundError
-from src.lib.function import convert_model_to_dict
+from src.lib.function import convert_model_to_dict, update_existing_data
 from src.functionality.db_postgre_functionality import DBPostgreFunctionality
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session
@@ -78,11 +78,13 @@ class AdminUsecase:
             if not org_result:
                 raise NotFoundError()
 
-            admin = Admin(
-                name=body_data.get("name"),
-                email=body_data.get("email"),
-                password=body_data.get("password"),
-                organization_id=org_result.id,
+            admin = Admin.validate(
+                {
+                    "name": body_data.get("name"),
+                    "email": body_data.get("email"),
+                    "password": body_data.get("password"),
+                    "organization_id": org_result.id,
+                }
             )
 
             session.add(admin)
@@ -178,9 +180,11 @@ class AdminUsecase:
             if not org_result or not admin_result:
                 raise NotFoundError()
 
-            admin_result.name = body_data.get("name")
-            admin_result.email = body_data.get("email")
-            admin_result.password = body_data.get("password")
+            # update existing admin with updated data
+            update_existing_data(admin_result, body_data)
+
+            # validate updated admin
+            Admin.validate({**convert_model_to_dict(admin_result)})
 
             session.commit()
             session.flush()

@@ -8,7 +8,7 @@ from src.lib.custom_exception import (
     HTTP_500_INTERNAL_SERVER_ERROR,
 )
 from src.lib.custom_exception import NotFoundError
-from src.lib.function import convert_model_to_dict
+from src.lib.function import convert_model_to_dict, update_existing_data
 from src.functionality.db_postgre_functionality import DBPostgreFunctionality
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session
@@ -154,10 +154,10 @@ class UserUsecase:
         ).first()
 
         try:
-            # update existing queue with updated data
-            [setattr(user_result, key, val) for key, val in body_data.items()]
+            # update existing user with updated data
+            update_existing_data(user_result, body_data)
 
-            # validate updated queue
+            # validate updated user
             User.validate({**convert_model_to_dict(user_result)})
 
             session.add(user_result)

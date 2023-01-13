@@ -6,20 +6,20 @@ import enum
 
 class SuperAdmin(SQLModel, table=True):
     __tablename__ = "super_admin"
-    id: int = Field(primary_key=True)
+    id: Optional[int] = Field(primary_key=True)
     name: str = Field(nullable=False)
     email: str = Field(nullable=False, unique=True)
     password: str = Field(nullable=False)
-    created_at: datetime = Field(default=datetime.now())
+    created_at: Optional[datetime] = Field(default=datetime.now())
 
     organization: "Organization" = Relationship(back_populates="super_admin")
 
 
 class Organization(SQLModel, table=True):
     __tablename__ = "organization"
-    id: int = Field(primary_key=True)
+    id: Optional[int] = Field(primary_key=True)
     name: str = Field(nullable=False)
-    created_at: datetime = Field(default=datetime.now())
+    created_at: Optional[datetime] = Field(default=datetime.now())
     description: str = Field(nullable=True)
     super_admin_id: int = Field(foreign_key="super_admin.id", nullable=False)
 
@@ -29,11 +29,11 @@ class Organization(SQLModel, table=True):
 
 class Admin(SQLModel, table=True):
     __tablename__ = "admin"
-    id: int = Field(primary_key=True)
+    id: Optional[int] = Field(primary_key=True)
     name: str = Field(nullable=False)
     email: str = Field(nullable=False, unique=True)
     password: str = Field(nullable=False)
-    created_at: datetime = Field(default=datetime.now())
+    created_at: Optional[datetime] = Field(default=datetime.now())
     organization_id: int = Field(foreign_key="organization.id", nullable=False)
 
     organization: Organization = Relationship(back_populates="admins")

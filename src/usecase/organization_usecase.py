@@ -10,7 +10,7 @@ from src.lib.custom_exception import (
 )
 from src.lib.custom_exception import NotFoundError
 from sqlalchemy.exc import IntegrityError
-from src.lib.function import convert_model_to_dict
+from src.lib.function import convert_model_to_dict, update_existing_data
 from sqlmodel import Session
 
 
@@ -64,10 +64,12 @@ class OrganizationUsecase:
             )
         ).first()
 
-        organization = Organization(
-            name=body_data.get("name"),
-            description=body_data.get("description"),
-            super_admin_id=super_admin_result.id,
+        organization = Organization.validate(
+            {
+                "name": body_data.get("name"),
+                "description": body_data.get("description"),
+                "super_admin_id": super_admin_result.id,
+            }
         )
 
         try:
@@ -153,8 +155,11 @@ class OrganizationUsecase:
             if not org_result:
                 raise NotFoundError()
 
-            org_result.name = body_data.get("name")
-            org_result.description = body_data.get("description")
+            # update existing organization with updated data
+            update_existing_data(org_result, body_data)
+
+            # validate updated organization
+            Organization.validate({**convert_model_to_dict(org_result)})
 
             session.commit()
             session.flush()

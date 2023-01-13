@@ -8,7 +8,7 @@ from src.lib.custom_exception import (
     HTTP_500_INTERNAL_SERVER_ERROR,
 )
 from src.lib.custom_exception import NotFoundError
-from src.lib.function import convert_model_to_dict
+from src.lib.function import convert_model_to_dict, update_existing_data
 from src.functionality.db_postgre_functionality import DBPostgreFunctionality
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session
@@ -50,10 +50,12 @@ class SuperAdminUsecase:
     def post_super_admin(self, body_data: dict) -> dict:
         """insert super admin data"""
 
-        super_admin = SuperAdmin(
-            name=body_data.get("name"),
-            email=body_data.get("email"),
-            password=body_data.get("password"),
+        super_admin = SuperAdmin.validate(
+            {
+                "name": body_data.get("name"),
+                "email": body_data.get("email"),
+                "password": body_data.get("password"),
+            }
         )
 
         session = Session(self._engine)
@@ -127,9 +129,11 @@ class SuperAdminUsecase:
             if not super_admin_result:
                 raise NotFoundError()
 
-            super_admin_result.name = body_data.get("name")
-            super_admin_result.email = body_data.get("email")
-            super_admin_result.password = body_data.get("password")
+            # update existing super admin with updated data
+            update_existing_data(super_admin_result, body_data)
+
+            # validate updated super admin
+            SuperAdmin.validate({**convert_model_to_dict(super_admin_result)})
 
             session.commit()
             session.flush()
