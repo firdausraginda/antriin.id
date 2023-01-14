@@ -4,15 +4,6 @@ from datetime import datetime
 import enum
 
 
-class SuperAdmin(SQLModel, table=True):
-    __tablename__ = "super_admin"
-    id: Optional[int] = Field(primary_key=True)
-    name: str = Field(nullable=False)
-    email: str = Field(nullable=False, unique=True)
-    password: str = Field(nullable=False)
-    created_at: Optional[datetime] = Field(default=datetime.now())
-
-
 class Organization(SQLModel, table=True):
     __tablename__ = "organization"
     id: Optional[int] = Field(primary_key=True)
