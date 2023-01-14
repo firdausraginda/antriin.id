@@ -15,7 +15,6 @@ from src.lib.function import (
 )
 from src.functionality.db_postgre_functionality import DBPostgreFunctionality
 from sqlalchemy.exc import IntegrityError, StatementError
-from sqlmodel import Session
 
 
 class QueueUsecase:

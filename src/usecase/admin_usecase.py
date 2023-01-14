@@ -11,80 +11,39 @@ from src.lib.custom_exception import NotFoundError
 from src.lib.function import convert_model_to_dict, update_existing_data
 from src.functionality.db_postgre_functionality import DBPostgreFunctionality
 from sqlalchemy.exc import IntegrityError
-from sqlmodel import Session
 
 
 class AdminUsecase:
     def __init__(self, db_postgre_functionality: DBPostgreFunctionality) -> None:
         self._db_postgre_functionality = db_postgre_functionality
 
-    def get_admin(self, super_admin_email: str, admin_id: int) -> dict:
-        """get admin data using super_admin_email and admin_id"""
+    def get_admin(self, admin_email: str) -> dict:
+        """get admin data using admin_email"""
 
         session = self._db_postgre_functionality.start_session()
 
-        super_admin_result = session.exec(
-            self._db_postgre_functionality.get_super_admin_using_email(
-                super_admin_email
-            )
-        ).first()
-
-        org_result = session.exec(
-            self._db_postgre_functionality.get_org_using_super_admin_id(
-                super_admin_result.id
-            )
-        ).first()
-
         admin_result = session.exec(
-            self._db_postgre_functionality.get_admin_in_list(org_result.id, admin_id)
-        ).all()
+            self._db_postgre_functionality.get_admin_using_admin_email(admin_email)
+        ).first()
 
-        try:
-            if not org_result or len(admin_result) == 0:
-                raise NotFoundError()
-        except NotFoundError as e:
-            session.rollback()
-            status_code = HTTP_404_NOT_FOUND
-            data = f"Error in function 'get_admin()': {repr(e)}"
-        except Exception as e:
-            session.rollback()
-            status_code = HTTP_500_INTERNAL_SERVER_ERROR
-            data = f"Error in function 'get_admin()': {repr(e)}"
-        else:
-            status_code = HTTP_200_OK
-            data = [convert_model_to_dict(admin) for admin in admin_result]
-        finally:
-            session.close()
+        session.close()
+
+        data = convert_model_to_dict(admin_result)
+        status_code = HTTP_200_OK
 
         return {"status_code": status_code, "data": data}
 
-    def post_admin(self, super_admin_email: str, body_data: dict) -> dict:
+    def post_admin(self, body_data: dict) -> dict:
         """insert admin data using"""
 
         session = self._db_postgre_functionality.start_session()
 
-        super_admin_result = session.exec(
-            self._db_postgre_functionality.get_super_admin_using_email(
-                super_admin_email
-            )
-        ).first()
-
-        org_result = session.exec(
-            self._db_postgre_functionality.get_org_using_super_admin_id(
-                super_admin_result.id
-            )
-        ).first()
-
         try:
-            if not org_result:
-                raise NotFoundError()
-
             admin = Admin.validate(
                 {
                     "name": body_data.get("name"),
                     "email": body_data.get("email"),
                     "password": body_data.get("password"),
-                    "organization_id": org_result.id,
                 }
             )
 
@@ -107,33 +66,16 @@ class AdminUsecase:
 
         return {"status_code": status_code, "data": data}
 
-    def delete_admin(self, super_admin_email: str, admin_id: int) -> dict:
-        """delete admin data using super_admin_email and admin_id"""
+    def delete_admin(self, admin_email: str) -> dict:
+        """delete admin data using admin_email"""
 
         session = self._db_postgre_functionality.start_session()
 
-        super_admin_result = session.exec(
-            self._db_postgre_functionality.get_super_admin_using_email(
-                super_admin_email
-            )
-        ).first()
-
-        org_result = session.exec(
-            self._db_postgre_functionality.get_org_using_super_admin_id(
-                super_admin_result.id
-            )
-        ).first()
-
         admin_result = session.exec(
-            self._db_postgre_functionality.get_admin_using_org_id_and_admin_id(
-                org_result.id, admin_id
-            )
+            self._db_postgre_functionality.get_admin_using_admin_email(admin_email)
         ).first()
 
         try:
-            if not org_result or not admin_result:
-                raise NotFoundError()
-
             session.delete(admin_result)
             session.commit()
         except IntegrityError as e:
@@ -156,35 +98,16 @@ class AdminUsecase:
 
         return {"status_code": status_code, "data": data}
 
-    def edit_admin(
-        self, super_admin_email: str, admin_id: int, body_data: dict
-    ) -> dict:
-        """edit admin data using super_admin_email and admin_id"""
+    def edit_admin(self, admin_email: str, body_data: dict) -> dict:
+        """edit admin data using admin_email and admin_id"""
 
         session = self._db_postgre_functionality.start_session()
 
-        super_admin_result = session.exec(
-            self._db_postgre_functionality.get_super_admin_using_email(
-                super_admin_email
-            )
-        ).first()
-
-        org_result = session.exec(
-            self._db_postgre_functionality.get_org_using_super_admin_id(
-                super_admin_result.id
-            )
-        ).first()
-
         admin_result = session.exec(
-            self._db_postgre_functionality.get_admin_using_org_id_and_admin_id(
-                org_result.id, admin_id
-            )
+            self._db_postgre_functionality.get_admin_using_admin_email(admin_email)
         ).first()
 
         try:
-            if not org_result or not admin_result:
-                raise NotFoundError()
-
             # update existing admin with updated data
             update_existing_data(admin_result, body_data)
 

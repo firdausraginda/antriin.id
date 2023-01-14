@@ -11,28 +11,23 @@ from src.lib.custom_exception import (
 from src.lib.custom_exception import NotFoundError
 from sqlalchemy.exc import IntegrityError
 from src.lib.function import convert_model_to_dict, update_existing_data
-from sqlmodel import Session
 
 
 class OrganizationUsecase:
     def __init__(self, db_postgre_functionality: DBPostgreFunctionality) -> None:
         self._db_postgre_functionality = db_postgre_functionality
 
-    def get_organization(self, super_admin_email: str) -> dict:
-        """get organization data per super_admin_email"""
+    def get_organization(self, admin_email: str) -> dict:
+        """get organization data per admin_email"""
 
         session = self._db_postgre_functionality.start_session()
 
-        super_admin_result = session.exec(
-            self._db_postgre_functionality.get_super_admin_using_email(
-                super_admin_email
-            )
+        admin_result = session.exec(
+            self._db_postgre_functionality.get_admin_using_admin_email(admin_email)
         ).first()
 
         org_result = session.exec(
-            self._db_postgre_functionality.get_org_using_super_admin_id(
-                super_admin_result.id
-            )
+            self._db_postgre_functionality.get_org_using_admin_id(admin_result.id)
         ).first()
 
         try:
@@ -54,26 +49,24 @@ class OrganizationUsecase:
 
         return {"status_code": status_code, "data": data}
 
-    def post_organization(self, super_admin_email: str, body_data: dict) -> dict:
+    def post_organization(self, admin_email: str, body_data: dict) -> dict:
         """insert organization data"""
 
         session = self._db_postgre_functionality.start_session()
 
-        super_admin_result = session.exec(
-            self._db_postgre_functionality.get_super_admin_using_email(
-                super_admin_email
-            )
+        admin_result = session.exec(
+            self._db_postgre_functionality.get_admin_using_admin_email(admin_email)
         ).first()
 
-        organization = Organization.validate(
-            {
-                "name": body_data.get("name"),
-                "description": body_data.get("description"),
-                "super_admin_id": super_admin_result.id,
-            }
-        )
-
         try:
+            organization = Organization.validate(
+                {
+                    "name": body_data.get("name"),
+                    "description": body_data.get("description"),
+                    "admin_id": admin_result.id,
+                }
+            )
+
             session.add(organization)
             session.commit()
             session.refresh(organization)
@@ -97,21 +90,17 @@ class OrganizationUsecase:
 
         return {"status_code": status_code, "data": data}
 
-    def delete_organization(self, super_admin_email: str) -> dict:
-        """delete organization data using super_admin_email"""
+    def delete_organization(self, admin_email: str) -> dict:
+        """delete organization data using admin_email"""
 
         session = self._db_postgre_functionality.start_session()
 
-        super_admin_result = session.exec(
-            self._db_postgre_functionality.get_super_admin_using_email(
-                super_admin_email
-            )
+        admin_result = session.exec(
+            self._db_postgre_functionality.get_admin_using_admin_email(admin_email)
         ).first()
 
         org_result = session.exec(
-            self._db_postgre_functionality.get_org_using_super_admin_id(
-                super_admin_result.id
-            )
+            self._db_postgre_functionality.get_org_using_admin_id(admin_result.id)
         ).first()
 
         try:
@@ -140,21 +129,17 @@ class OrganizationUsecase:
 
         return {"status_code": status_code, "data": data}
 
-    def edit_organization(self, super_admin_email: str, body_data: dict) -> dict:
-        """edit organization data using super_admin_email"""
+    def edit_organization(self, admin_email: str, body_data: dict) -> dict:
+        """edit organization data using admin_email"""
 
         session = self._db_postgre_functionality.start_session()
 
-        super_admin_result = session.exec(
-            self._db_postgre_functionality.get_super_admin_using_email(
-                super_admin_email
-            )
+        admin_result = session.exec(
+            self._db_postgre_functionality.get_admin_using_admin_email(admin_email)
         ).first()
 
         org_result = session.exec(
-            self._db_postgre_functionality.get_org_using_super_admin_id(
-                super_admin_result.id
-            )
+            self._db_postgre_functionality.get_org_using_admin_id(admin_result.id)
         ).first()
 
         try:

@@ -11,7 +11,6 @@ from src.lib.custom_exception import NotFoundError, DuplicateItemByForeignKey
 from src.lib.function import convert_model_to_dict, update_existing_data
 from src.functionality.db_postgre_functionality import DBPostgreFunctionality
 from sqlalchemy.exc import IntegrityError, StatementError
-from sqlmodel import Session
 
 
 class QueueUserUsecase:

@@ -24,6 +24,11 @@ class DBPostgreFunctionality:
 
         return select(SuperAdmin).where(SuperAdmin.id == super_admin_id)
 
+    def get_org_using_admin_id(self, admin_id: int) -> Organization:
+        """get organization data using admin id"""
+
+        return select(Organization).where(Organization.admin_id == admin_id)
+
     def get_org_using_super_admin_id(self, super_admin_id: int) -> Organization:
         """get organization data using super admin id"""
 

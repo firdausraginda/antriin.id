@@ -12,8 +12,6 @@ class SuperAdmin(SQLModel, table=True):
     password: str = Field(nullable=False)
     created_at: Optional[datetime] = Field(default=datetime.now())
 
-    organization: "Organization" = Relationship(back_populates="super_admin")
-
 
 class Organization(SQLModel, table=True):
     __tablename__ = "organization"
@@ -21,10 +19,9 @@ class Organization(SQLModel, table=True):
     name: str = Field(nullable=False)
     created_at: Optional[datetime] = Field(default=datetime.now())
     description: str = Field(nullable=True)
-    super_admin_id: int = Field(foreign_key="super_admin.id", nullable=False)
+    admin_id: int = Field(foreign_key="admin.id", nullable=False, unique=True)
 
-    super_admin: SuperAdmin = Relationship(back_populates="organization")
-    admins: List["Admin"] = Relationship(back_populates="organization")
+    admin: "Admin" = Relationship(back_populates="organization")
 
 
 class Admin(SQLModel, table=True):
@@ -34,9 +31,8 @@ class Admin(SQLModel, table=True):
     email: str = Field(nullable=False, unique=True)
     password: str = Field(nullable=False)
     created_at: Optional[datetime] = Field(default=datetime.now())
-    organization_id: int = Field(foreign_key="organization.id", nullable=False)
 
-    organization: Organization = Relationship(back_populates="admins")
+    organization: Organization = Relationship(back_populates="admin")
     queues: List["Queue"] = Relationship(back_populates="admin")
 
 

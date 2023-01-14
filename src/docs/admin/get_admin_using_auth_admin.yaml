@@ -1,0 +1,12 @@
+Get all admin data using auth admin
+---
+
+tags:
+  - Admin
+security:
+  - BasicAuth: []
+responses:
+  200:
+    description: Successfully get data
+  401:
+    description: Unauthorized

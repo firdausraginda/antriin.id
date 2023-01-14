@@ -1,4 +1,4 @@
-Edit admin data by admin_id using auth super admin
+Insert admin data using auth admin
 ---
 
 tags:
@@ -27,18 +27,10 @@ parameters:
           type: "string"
           format: password
           example: "********"
-  - name: admin_id
-    description: the path should contain admin_id
-    in: path
-    required: true
-    schema:
-      type: integer
 
 responses:
-  200:
+  201:
     description: Successfully insert data
-  404:
-    description: Item not found
   400:
     description: Bad request, violates integrity constraints
   500:

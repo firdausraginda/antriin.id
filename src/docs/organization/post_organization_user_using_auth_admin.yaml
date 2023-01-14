@@ -1,36 +1,33 @@
-Insert admin data using auth super admin
+Insert organization data using auth admin
 ---
 
 tags:
-  - Admin
+  - Organization
 security:
   - BasicAuth: []
 parameters:
   - name: body
-    description: the body should contain name, email & password
+    description: the body should contain name, description
     in: body
     required: true
     schema:
       type: object
       required:
         - "name"
-        - "email"
-        - "password"
+        - "description"
       properties:
         name:
           type: "string"
-          example: "admin"
-        email:
-          type: "email"
-          example: "admin@gmail.com"
-        password:
+          example: "organization x"
+        description:
           type: "string"
-          format: password
-          example: "********"
+          example: "this is organization"
 
 responses:
   201:
     description: Successfully insert data
+  404:
+    description: Item not found
   400:
     description: Bad request, violates integrity constraints
   500:
