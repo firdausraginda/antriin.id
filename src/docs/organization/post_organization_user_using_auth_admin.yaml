@@ -1,4 +1,4 @@
-Edit organization data by id using auth super admin
+Insert organization data using auth admin
 ---
 
 tags:
@@ -7,7 +7,7 @@ security:
   - BasicAuth: []
 parameters:
   - name: body
-    description: the body should contain name, & description
+    description: the body should contain name, description
     in: body
     required: true
     schema:
@@ -18,19 +18,17 @@ parameters:
       properties:
         name:
           type: "string"
-          example: "user"
+          example: "organization x"
         description:
           type: "string"
-          example: "this is organization x"
-  - name: id
-    description: the path should contain organization ID
-    in: path
-    required: true
-    schema:
-      type: integer
+          example: "this is organization"
 
 responses:
-  200:
+  201:
     description: Successfully insert data
   404:
-    description: Organization ID not found
+    description: Item not found
+  400:
+    description: Bad request, violates integrity constraints
+  500:
+    description: Internal server error

@@ -1,4 +1,4 @@
-Get all admin data using auth super admin
+Get all admin data using auth admin
 ---
 
 tags:
@@ -8,5 +8,5 @@ security:
 responses:
   200:
     description: Successfully get data
-  404:
-    description: admin ID not found
+  401:
+    description: Unauthorized

@@ -72,9 +72,11 @@ refer to these docs to set `swagger.py`:
     * [initializing flasgger with default data](https://github.com/flasgger/flasgger#initializing-flasgger-with-default-data)
     * [custom default configurations](https://github.com/flasgger/flasgger#customize-default-configurations)
 
-refer [here](https://github.com/flasgger/flasgger#using-external-yaml-files) to defin API docs in yaml file
+refer [here](https://github.com/flasgger/flasgger#using-external-yaml-files) to define API docs in yaml file
 
 refer [here](https://swagger.io/docs/specification/2-0/authentication/) to define authorization
+
+swagger localhost: `http://127.0.0.1:5000/api/docs`
 
 install flasgger for better documentation
 ```sh

@@ -1,13 +1,13 @@
-Insert queue data using auth admin
+Edit organization data using auth super admin
 ---
 
 tags:
-  - Queue
+  - Organization
 security:
   - BasicAuth: []
 parameters:
   - name: body
-    description: the body should contain name, description, status
+    description: the body should contain name, & description
     in: body
     required: true
     schema:
@@ -15,21 +15,19 @@ parameters:
       required:
         - "name"
         - "description"
-        - "status"
       properties:
         name:
           type: "string"
-          example: "queue 1"
+          example: "user"
         description:
           type: "string"
-          example: "this is queue"
-        status:
-          type: "string"
-          example: "off"
+          example: "this is organization x"
 
 responses:
-  201:
+  200:
     description: Successfully insert data
+  404:
+    description: Item not found
   400:
     description: Bad request, violates integrity constraints
   500:

@@ -1,8 +1,8 @@
-Delete user data using auth user
+Delete admin data by admin_id using auth admin
 ---
 
 tags:
-  - User
+  - Admin
 security:
   - BasicAuth: []
 

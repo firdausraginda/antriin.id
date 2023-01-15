@@ -1,8 +1,10 @@
-Insert super admin data
+Edit admin data by admin_id using auth admin
 ---
 
 tags:
-  - Super Admin
+  - Admin
+security:
+  - BasicAuth: []
 parameters:
   - name: body
     description: the body should contain name, email & password
@@ -17,15 +19,21 @@ parameters:
       properties:
         name:
           type: "string"
-          example: "super_admin"
+          example: "admin"
         email:
           type: "email"
-          example: "super_admin@gmail.com"
+          example: "admin@gmail.com"
         password:
           type: "string"
           format: password
           example: "********"
 
 responses:
-  201:
+  200:
     description: Successfully insert data
+  404:
+    description: Item not found
+  400:
+    description: Bad request, violates integrity constraints
+  500:
+    description: Internal server error

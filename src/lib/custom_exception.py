@@ -55,3 +55,17 @@ HTTP_508_LOOP_DETECTED = 508
 HTTP_509_BANDWIDTH_LIMIT_EXCEEDED = 509
 HTTP_510_NOT_EXTENDED = 510
 HTTP_511_NETWORK_AUTHENTICATION_REQUIRED = 511
+
+
+class NotFoundError(Exception):
+    """custom error when item not found in DB"""
+
+    def __init__(self):
+        super().__init__(f"item not found!")
+
+
+class DuplicateItemByForeignKey(Exception):
+    """custom error when item duplicated by the foreign key"""
+
+    def __init__(self):
+        super().__init__(f"item duplicate by foreign key!")

@@ -9,3 +9,5 @@ security:
 responses:
   200:
     description: Successfully get data
+  401:
+    description: Unauthorized access
