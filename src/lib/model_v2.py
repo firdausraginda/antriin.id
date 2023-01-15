@@ -65,6 +65,7 @@ class Queue(SQLModel, table=True):
         sa_column=Column(Enum(QueueStatus)), default=QueueStatus.off
     )
     short_url: str = Field(nullable=False, unique=True)
+    current_queue_number: int = Field(nullable=False, default=0)
     admin_id: int = Field(foreign_key="admin.id", nullable=False)
 
     admin: Admin = Relationship(back_populates="queues")

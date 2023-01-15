@@ -50,6 +50,28 @@ def process_queue(queue_usecase, admin_auth, user_auth):
 
         return jsonify({"data": result["data"]}), result["status_code"]
 
+    @queue.post("/next_queue_number/<int:queue_id>")
+    @admin_auth.login_required
+    # @swag_from()
+    def increment_queue_number(queue_id):
+
+        result = queue_usecase.increment_queue_number(
+            admin_auth.current_user(), queue_id
+        )
+
+        return jsonify({"data": result["data"]}), result["status_code"]
+
+    @queue.post("/previous_queue_number/<int:queue_id>")
+    @admin_auth.login_required
+    # @swag_from()
+    def decrement_queue_number(queue_id):
+
+        result = queue_usecase.decrement_queue_number(
+            admin_auth.current_user(), queue_id
+        )
+
+        return jsonify({"data": result["data"]}), result["status_code"]
+
     @queue.delete("/<int:queue_id>")
     @admin_auth.login_required
     @swag_from("../docs/queue/delete_queue_by_id_using_auth_admin.yaml")
