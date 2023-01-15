@@ -1,14 +1,22 @@
-from sqlmodel import Field, Relationship, SQLModel, Enum, Column
+from sqlmodel import Field, Relationship, SQLModel, Enum, Column, DateTime
 from typing import List, Optional
 from datetime import datetime
 import enum
+from sqlalchemy.sql import func
 
 
 class Organization(SQLModel, table=True):
     __tablename__ = "organization"
     id: Optional[int] = Field(primary_key=True)
     name: str = Field(nullable=False)
-    created_at: Optional[datetime] = Field(default=datetime.now())
+    created_at: Optional[datetime] = Field(
+        sa_column=Column(DateTime(timezone=True), server_default=func.now())
+    )
+    updated_at: Optional[datetime] = Field(
+        sa_column=Column(
+            DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+        )
+    )
     description: str = Field(nullable=True)
     admin_id: int = Field(foreign_key="admin.id", nullable=False, unique=True)
 
@@ -21,7 +29,14 @@ class Admin(SQLModel, table=True):
     name: str = Field(nullable=False)
     email: str = Field(nullable=False, unique=True)
     password: str = Field(nullable=False)
-    created_at: Optional[datetime] = Field(default=datetime.now())
+    created_at: Optional[datetime] = Field(
+        sa_column=Column(DateTime(timezone=True), server_default=func.now())
+    )
+    updated_at: Optional[datetime] = Field(
+        sa_column=Column(
+            DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+        )
+    )
 
     organization: Organization = Relationship(back_populates="admin")
     queues: List["Queue"] = Relationship(back_populates="admin")
@@ -37,8 +52,14 @@ class Queue(SQLModel, table=True):
     __tablename__ = "queue"
     id: Optional[int] = Field(primary_key=True)
     name: str = Field(nullable=False, unique=True)
-    created_at: Optional[datetime] = Field(default=datetime.now())
-    updated_at: Optional[datetime] = Field(default=datetime.now())
+    created_at: Optional[datetime] = Field(
+        sa_column=Column(DateTime(timezone=True), server_default=func.now())
+    )
+    updated_at: Optional[datetime] = Field(
+        sa_column=Column(
+            DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+        )
+    )
     description: str = Field(nullable=True)
     status: QueueStatus = Field(
         sa_column=Column(Enum(QueueStatus)), default=QueueStatus.off
@@ -56,7 +77,14 @@ class User(SQLModel, table=True):
     name: str = Field(nullable=False)
     email: str = Field(nullable=False, unique=True)
     password: str = Field(nullable=False)
-    created_at: Optional[datetime] = Field(default=datetime.now())
+    created_at: Optional[datetime] = Field(
+        sa_column=Column(DateTime(timezone=True), server_default=func.now())
+    )
+    updated_at: Optional[datetime] = Field(
+        sa_column=Column(
+            DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+        )
+    )
 
     queueusers: List["QueueUser"] = Relationship(back_populates="user")
 
@@ -72,8 +100,14 @@ class QueueUser(SQLModel, table=True):
     status: QueueUserStatus = Field(
         sa_column=Column(Enum(QueueUserStatus)), default=QueueUserStatus.in_queue
     )
-    created_at: Optional[datetime] = Field(default=datetime.now())
-    updated_at: Optional[datetime] = Field(default=datetime.now())
+    created_at: Optional[datetime] = Field(
+        sa_column=Column(DateTime(timezone=True), server_default=func.now())
+    )
+    updated_at: Optional[datetime] = Field(
+        sa_column=Column(
+            DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+        )
+    )
     queue_id: int = Field(foreign_key="queue.id", nullable=False)
     user_id: int = Field(foreign_key="user.id", nullable=False)
 
