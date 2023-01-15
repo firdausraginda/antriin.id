@@ -66,6 +66,7 @@ class Queue(SQLModel, table=True):
     )
     short_url: str = Field(nullable=False, unique=True)
     current_queue_number: int = Field(nullable=False, default=0)
+    total_queue_number: int = Field(nullable=False, default=0)
     admin_id: int = Field(foreign_key="admin.id", nullable=False)
 
     admin: Admin = Relationship(back_populates="queues")
@@ -109,6 +110,7 @@ class QueueUser(SQLModel, table=True):
             DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
         )
     )
+    queue_number: int
     queue_id: int = Field(foreign_key="queue.id", nullable=False)
     user_id: int = Field(foreign_key="user.id", nullable=False)
 

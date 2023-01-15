@@ -71,23 +71,15 @@ class QueueUserUsecase:
         ).all()
 
         try:
-            queue_user = QueueUser.validate(
-                {
-                    "status": body_data.get("status"),
-                    "queue_id": body_data.get("queue_id"),
-                    "user_id": body_data.get("user_id"),
-                }
-            )
-
             queue_result = session.exec(
                 self._db_postgre_functionality.get_queue_using_queue_id(
-                    queue_user.queue_id
+                    body_data.get("queue_id")
                 )
             ).first()
 
             user_result = session.exec(
                 self._db_postgre_functionality.get_user_using_user_id(
-                    queue_user.user_id
+                    body_data.get("user_id")
                 )
             ).first()
 
@@ -96,7 +88,7 @@ class QueueUserUsecase:
                 or not user_result
                 or not any(
                     [
-                        queue_user.queue_id == queue_existing.id
+                        body_data.get("queue_id") == queue_existing.id
                         for queue_existing in queue_admin_result
                     ]
                 )
@@ -105,13 +97,26 @@ class QueueUserUsecase:
             else:
                 queue_user_result = session.exec(
                     self._db_postgre_functionality.get_queue_user_using_queue_id_and_user_id(
-                        queue_result.id, user_result.id
+                        body_data.get("queue_id"), body_data.get("user_id")
                     )
                 ).first()
                 if queue_user_result:
                     raise DuplicateItemByForeignKey()
 
+            queue_user = QueueUser.validate(
+                {
+                    "status": body_data.get("status"),
+                    "queue_id": body_data.get("queue_id"),
+                    "user_id": body_data.get("user_id"),
+                    "queue_number": queue_result.total_queue_number + 1,
+                }
+            )
+
+            # increment total_queue_number whenever new user join a queue
+            queue_result.total_queue_number += 1
+
             session.add(queue_user)
+            session.add(queue_result)
             session.commit()
             session.refresh(queue_user)
         except NotFoundError as e:
@@ -160,10 +165,18 @@ class QueueUserUsecase:
                     raise DuplicateItemByForeignKey()
 
             queue_user = QueueUser.validate(
-                {"queue_id": queue_id, "user_id": user_result.id}
+                {
+                    "queue_id": queue_id,
+                    "user_id": user_result.id,
+                    "queue_number": queue_result.total_queue_number + 1,
+                }
             )
 
+            # increment total_queue_number whenever new user join a queue
+            queue_result.total_queue_number += 1
+
             session.add(queue_user)
+            session.add(queue_result)
             session.commit()
             session.refresh(queue_user)
         except NotFoundError as e:
