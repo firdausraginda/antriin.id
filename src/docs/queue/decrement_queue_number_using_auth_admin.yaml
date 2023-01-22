@@ -1,0 +1,25 @@
+Decrement queue_number by -1 using auth admin
+---
+
+tags:
+  - Queue
+security:
+  - BasicAuth: []
+parameters:
+  - name: queue_id
+    description: path should contain queue_id
+    in: path
+    required: true
+    schema:
+      type: integer
+      required:
+        - "queue_id"
+      properties:
+        queue_id:
+          example: 1
+
+responses:
+  200:
+    description: Successfully get data
+  404:
+    description: queue ID not found
