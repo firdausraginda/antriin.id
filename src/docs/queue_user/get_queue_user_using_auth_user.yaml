@@ -1,0 +1,14 @@
+Get all queue user data using auth user
+---
+
+tags:
+  - Queue User
+security:
+  - BasicAuth: []
+responses:
+  200:
+    description: Successfully get data
+  404:
+    description: Queue user ID not found
+  500:
+    description: Internal server error

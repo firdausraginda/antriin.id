@@ -17,7 +17,7 @@ class QueueUserUsecase:
     def __init__(self, db_postgre_functionality: DBPostgreFunctionality) -> None:
         self._db_postgre_functionality = db_postgre_functionality
 
-    def get_queue_by_admin(self, admin_email: str, queue_user_id: int) -> dict:
+    def get_queue_user_by_admin(self, admin_email: str, queue_user_id: int) -> dict:
         """get queue data using admin_email and queue_user_id"""
 
         session = self._db_postgre_functionality.start_session()
@@ -40,17 +40,56 @@ class QueueUserUsecase:
             if len(queue_result) == 0 or len(queue_user_result) == 0:
                 raise NotFoundError()
         except NotFoundError as e:
-            session.rollback()
             status_code = HTTP_404_NOT_FOUND
-            data = f"Error in function 'get_queue_by_admin()': {repr(e)}"
+            data = f"Error in function 'get_queue_user_by_admin()': {repr(e)}"
         except Exception as e:
-            session.rollback()
             status_code = HTTP_500_INTERNAL_SERVER_ERROR
-            data = f"Error in function 'get_queue_by_admin()': {repr(e)}"
+            data = f"Error in function 'get_queue_user_by_admin()': {repr(e)}"
         else:
             status_code = HTTP_200_OK
             data = [
                 convert_model_to_dict(queue_user) for queue_user in queue_user_result
+            ]
+        finally:
+            session.close()
+
+        return {"status_code": status_code, "data": data}
+
+    def get_queue_user_by_user(self, user_email: str, queue_id: int) -> dict:
+
+        session = self._db_postgre_functionality.start_session()
+
+        user_result = session.exec(
+            self._db_postgre_functionality.get_user_using_user_email(user_email)
+        ).first()
+
+        queue_info_result = session.exec(
+            self._db_postgre_functionality.get_queue_and_user_info_in_list(
+                user_result.id, queue_id
+            )
+        ).all()
+
+        try:
+            if len(queue_info_result) == 0:
+                raise NotFoundError()
+
+        except NotFoundError as e:
+            status_code = HTTP_404_NOT_FOUND
+            data = f"Error in function 'get_queue_user_by_user()': {repr(e)}"
+        except Exception as e:
+            status_code = HTTP_500_INTERNAL_SERVER_ERROR
+            data = f"Error in function 'get_queue_user_by_user()': {repr(e)}"
+        else:
+            status_code = HTTP_200_OK
+            data = [
+                {
+                    "queue_id": queue_info.id,
+                    "queue_name": queue_info.name,
+                    "current_queue_number": queue_info.current_queue_number,
+                    "total_queue_number": queue_info.total_queue_number,
+                    "user_queue_number": queue_info.queue_number,
+                }
+                for queue_info in queue_info_result
             ]
         finally:
             session.close()
@@ -71,23 +110,15 @@ class QueueUserUsecase:
         ).all()
 
         try:
-            queue_user = QueueUser.validate(
-                {
-                    "status": body_data.get("status"),
-                    "queue_id": body_data.get("queue_id"),
-                    "user_id": body_data.get("user_id"),
-                }
-            )
-
             queue_result = session.exec(
                 self._db_postgre_functionality.get_queue_using_queue_id(
-                    queue_user.queue_id
+                    body_data.get("queue_id")
                 )
             ).first()
 
             user_result = session.exec(
                 self._db_postgre_functionality.get_user_using_user_id(
-                    queue_user.user_id
+                    body_data.get("user_id")
                 )
             ).first()
 
@@ -96,7 +127,7 @@ class QueueUserUsecase:
                 or not user_result
                 or not any(
                     [
-                        queue_user.queue_id == queue_existing.id
+                        body_data.get("queue_id") == queue_existing.id
                         for queue_existing in queue_admin_result
                     ]
                 )
@@ -105,13 +136,26 @@ class QueueUserUsecase:
             else:
                 queue_user_result = session.exec(
                     self._db_postgre_functionality.get_queue_user_using_queue_id_and_user_id(
-                        queue_result.id, user_result.id
+                        body_data.get("queue_id"), body_data.get("user_id")
                     )
                 ).first()
                 if queue_user_result:
                     raise DuplicateItemByForeignKey()
 
+            queue_user = QueueUser.validate(
+                {
+                    "status": body_data.get("status"),
+                    "queue_id": body_data.get("queue_id"),
+                    "user_id": body_data.get("user_id"),
+                    "queue_number": queue_result.total_queue_number + 1,
+                }
+            )
+
+            # increment total_queue_number whenever new user join a queue
+            queue_result.total_queue_number += 1
+
             session.add(queue_user)
+            session.add(queue_result)
             session.commit()
             session.refresh(queue_user)
         except NotFoundError as e:
@@ -160,10 +204,18 @@ class QueueUserUsecase:
                     raise DuplicateItemByForeignKey()
 
             queue_user = QueueUser.validate(
-                {"queue_id": queue_id, "user_id": user_result.id}
+                {
+                    "queue_id": queue_id,
+                    "user_id": user_result.id,
+                    "queue_number": queue_result.total_queue_number + 1,
+                }
             )
 
+            # increment total_queue_number whenever new user join a queue
+            queue_result.total_queue_number += 1
+
             session.add(queue_user)
+            session.add(queue_result)
             session.commit()
             session.refresh(queue_user)
         except NotFoundError as e:
@@ -209,7 +261,17 @@ class QueueUserUsecase:
             if len(queue_result) == 0 or not queue_user_result:
                 raise NotFoundError()
 
+            queue_result_deleted = session.exec(
+                self._db_postgre_functionality.get_queue_using_queue_id(
+                    queue_user_result.queue_id
+                )
+            ).first()
+
+            # decrement total_queue_number whenever queue user was deleted
+            queue_result_deleted.total_queue_number -= 1
+
             session.delete(queue_user_result)
+            session.add(queue_result_deleted)
             session.commit()
         except IntegrityError as e:
             session.rollback()
@@ -259,8 +321,8 @@ class QueueUserUsecase:
                 if not queue_user_result:
                     raise NotFoundError()
 
-            # update existing queue user with updated data
-            update_existing_data(queue_user_result, body_data)
+            # update existing queue user status with new status
+            update_existing_data(queue_user_result, {"status": body_data["status"]})
 
             # validate updated queue user
             QueueUser.validate({**convert_model_to_dict(queue_user_result)})
