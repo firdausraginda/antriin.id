@@ -11,4 +11,5 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 COPY . /app
 
 # start the server
-ENTRYPOINT ["gunicorn", "-w", "4", "--reload", "-b", "0.0.0.0:8089","src:create_app()"]
+# ENTRYPOINT ["gunicorn", "src:create_app()", "-w", "4", "-b", "0.0.0.0:8089", "--reload"]
+CMD gunicorn 'src:create_app()' -w 4 -b 0.0.0.0:8089 --reload

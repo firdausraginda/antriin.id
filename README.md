@@ -95,16 +95,21 @@ Instead of creating a Flask instance globally, better to create it inside a func
 ### gunicorn
 Run this command **outside the virtual env**
 ```sh
-gunicorn -w 4 --reload -b 0.0.0.0:8080 'src:create_app()'
+gunicorn -w 4 --reload -b 0.0.0.0:8089 'src:create_app()'
 ```
 
 ### docker
 Build docker image
 ```sh
-docker build -t antriin.id .
+docker build -t antriin_id .
 ```
 
 Create and run container
 ```sh
-docker run -d -p 8089:8089 antriin.id
+docker run -d -p 8089:8089 antriin_id
+```
+
+Run docker compose
+```sh
+docker-compose up --build
 ```
