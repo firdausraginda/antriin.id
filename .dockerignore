@@ -3,3 +3,4 @@ vir-env
 .env
 .git
 .gitignore
+__pycache__/
