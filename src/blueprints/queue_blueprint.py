@@ -23,7 +23,7 @@ def process_queue(queue_usecase, admin_auth, user_auth):
 
         return jsonify({"data": result["data"]}), result["status_code"]
 
-    @queue.get("/list", defaults={"queue_id": None}, endpoint="get_by_user_without_id")
+    @queue.get("/list/", defaults={"queue_id": None}, endpoint="get_by_user_without_id")
     @queue.get("/list/<int:queue_id>", endpoint="get_by_user_with_id")
     @user_auth.login_required
     @swag_from(
