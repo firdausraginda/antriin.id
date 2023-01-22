@@ -52,7 +52,7 @@ def process_queue(queue_usecase, admin_auth, user_auth):
 
     @queue.post("/next_queue_number/<int:queue_id>")
     @admin_auth.login_required
-    # @swag_from()
+    @swag_from("../docs/queue/increment_queue_number_using_auth_admin.yaml")
     def increment_queue_number(queue_id):
 
         result = queue_usecase.increment_queue_number(
@@ -63,7 +63,7 @@ def process_queue(queue_usecase, admin_auth, user_auth):
 
     @queue.post("/previous_queue_number/<int:queue_id>")
     @admin_auth.login_required
-    # @swag_from()
+    @swag_from("../docs/queue/decrement_queue_number_using_auth_admin.yaml")
     def decrement_queue_number(queue_id):
 
         result = queue_usecase.decrement_queue_number(

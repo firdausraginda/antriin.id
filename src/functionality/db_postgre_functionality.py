@@ -77,11 +77,6 @@ class DBPostgreFunctionality:
 
         return select(Queue).where(Queue.admin_id == admin_id)
 
-    # def get_queue_using_user_id(self, user_id: int) -> Queue:
-    #     """get queue using user_id"""
-
-    #     return select(Queue).where(Queue.user_id == user_id)
-
     def get_queue_using_short_url(self, short_url: str) -> Queue:
         """get queue using short_url"""
 
