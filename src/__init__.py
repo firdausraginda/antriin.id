@@ -33,8 +33,9 @@ from src.auth.user_auth import user_auth
 
 def create_app(test_config=None):
 
-    app = Flask(__name__, instance_relative_config=True)
-    engine = create_engine(os.environ.get("SQLALCHEMY_DB_URI"))
+    app = Flask(__name__)
+    # engine = create_engine(os.environ.get("SQLALCHEMY_DB_URI"))
+    engine = create_engine("sqlite:///antriin.db")
 
     @app.before_first_request
     def create_db():
@@ -51,7 +52,7 @@ def create_app(test_config=None):
 
     @app.get("/health")
     def check_health():
-        return jsonify({"message": "running well!"})
+        return jsonify({"message": "running very well!"})
 
     # init functionality
     db_postgre_functionality = DBPostgreFunctionality(engine)
