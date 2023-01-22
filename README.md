@@ -65,7 +65,14 @@ pip3 install Flask-HTTPAuth
 export SECRET_KEY="dev"
 ```
 
-### Other Dependencies
+* `.flaskenv` file
+```
+export FLASK_ENV=development
+export FLASK_APP=src
+export SQLALCHEMY_DB_URI=sqlite:///antriin.db
+```
+
+### Swagger
 
 * [flasgger](https://github.com/flasgger/flasgger)
 refer to these docs to set `swagger.py`:
@@ -87,18 +94,13 @@ pip3 install -U setuptools
 pip3 install flasgger
 ```
 
-## Note
-
-### [Application Factory](https://flask.palletsprojects.com/en/2.1.x/tutorial/factory/)
-Instead of creating a Flask instance globally, better to create it inside a function. This function is known as the application factory. Any configuration, registration, and other setup the application needs will happen inside the function, then the application will be returned.
-
-### gunicorn
+### Gunicorn
 Run this command **outside the virtual env**
 ```sh
 gunicorn -w 4 --reload -b 0.0.0.0:8089 'src:create_app()'
 ```
 
-### docker
+### Docker
 Build docker image
 ```sh
 docker build -t antriin_id .
@@ -113,3 +115,8 @@ Run docker compose
 ```sh
 docker-compose up --build
 ```
+
+## Note
+
+### [Application Factory](https://flask.palletsprojects.com/en/2.1.x/tutorial/factory/)
+Instead of creating a Flask instance globally, better to create it inside a function. This function is known as the application factory. Any configuration, registration, and other setup the application needs will happen inside the function, then the application will be returned.
