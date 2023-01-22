@@ -92,3 +92,8 @@ pip3 install flasgger
 ### [Application Factory](https://flask.palletsprojects.com/en/2.1.x/tutorial/factory/)
 Instead of creating a Flask instance globally, better to create it inside a function. This function is known as the application factory. Any configuration, registration, and other setup the application needs will happen inside the function, then the application will be returned.
 
+### gunicorn
+Run this command **outside the virtual env**
+```sh
+gunicorn -w 4 -b 0.0.0.0:8080 'src:create_app()'
+```
