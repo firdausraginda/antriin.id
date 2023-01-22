@@ -23,7 +23,7 @@ def process_queue(queue_usecase, admin_auth, user_auth):
 
         return jsonify({"data": result["data"]}), result["status_code"]
 
-    @queue.get("/list", defaults={"queue_id": None}, endpoint="get_by_user_without_id")
+    @queue.get("/list/", defaults={"queue_id": None}, endpoint="get_by_user_without_id")
     @queue.get("/list/<int:queue_id>", endpoint="get_by_user_with_id")
     @user_auth.login_required
     @swag_from(
@@ -47,6 +47,28 @@ def process_queue(queue_usecase, admin_auth, user_auth):
 
         body_data = request.get_json()
         result = queue_usecase.post_queue(admin_auth.current_user(), body_data)
+
+        return jsonify({"data": result["data"]}), result["status_code"]
+
+    @queue.post("/next_queue_number/<int:queue_id>")
+    @admin_auth.login_required
+    @swag_from("../docs/queue/increment_queue_number_using_auth_admin.yaml")
+    def increment_queue_number(queue_id):
+
+        result = queue_usecase.increment_queue_number(
+            admin_auth.current_user(), queue_id
+        )
+
+        return jsonify({"data": result["data"]}), result["status_code"]
+
+    @queue.post("/previous_queue_number/<int:queue_id>")
+    @admin_auth.login_required
+    @swag_from("../docs/queue/decrement_queue_number_using_auth_admin.yaml")
+    def decrement_queue_number(queue_id):
+
+        result = queue_usecase.decrement_queue_number(
+            admin_auth.current_user(), queue_id
+        )
 
         return jsonify({"data": result["data"]}), result["status_code"]
 

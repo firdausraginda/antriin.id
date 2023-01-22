@@ -1,0 +1,27 @@
+Get queue user data by queue_user_id using auth user
+---
+
+tags:
+  - Queue User
+security:
+  - BasicAuth: []
+parameters:
+  - name: queue_user_id
+    description: path should contain queue_user_id
+    in: path
+    required: true
+    schema:
+      type: integer
+      required:
+        - "queue_user_id"
+      properties:
+        queue_user_id:
+          example: 1
+
+responses:
+  200:
+    description: Successfully get data
+  404:
+    description: Item not found
+  500:
+    description: Internal server error

@@ -148,6 +148,49 @@ class DBPostgreFunctionality:
 
         return select(QueueUser).where(QueueUser.user_id == user_id)
 
+    def get_queue_and_user_info_using_user_id(self, user_id: int) -> Queue:
+        """get queue using list of queue_user"""
+
+        return (
+            select(
+                Queue.id,
+                Queue.name,
+                Queue.current_queue_number,
+                Queue.total_queue_number,
+                QueueUser.queue_number,
+            )
+            .join(QueueUser, isouter=True)
+            .join(User, isouter=True)
+            .where(User.id == user_id)
+        )
+
+    def get_queue_and_user_info_using_user_id_and_queue_id(
+        self, user_id: int, queue_id: int
+    ) -> Queue:
+        """get queue using list of queue_user"""
+
+        return (
+            select(
+                Queue.id,
+                Queue.name,
+                Queue.current_queue_number,
+                Queue.total_queue_number,
+                QueueUser.queue_number,
+            )
+            .join(QueueUser, isouter=True)
+            .join(User, isouter=True)
+            .where(User.id == user_id, Queue.id == queue_id)
+        )
+
+    def get_queue_and_user_info_in_list(self, user_id: int, queue_id: int) -> Queue:
+        """get queue info using list queue_user and queue_id if any"""
+
+        return (
+            self.get_queue_and_user_info_using_user_id_and_queue_id(user_id, queue_id)
+            if queue_id
+            else self.get_queue_and_user_info_using_user_id(user_id)
+        )
+
     def get_queue_user_using_list_queue(self, list_queue: list) -> QueueUser:
         """get queue user using list of queue"""
 

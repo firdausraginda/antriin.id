@@ -69,3 +69,10 @@ class DuplicateItemByForeignKey(Exception):
 
     def __init__(self):
         super().__init__(f"item duplicate by foreign key!")
+
+
+class InvalidValue(Exception):
+    """custom error for int value that less than 0"""
+
+    def __init__(self):
+        super().__init__(f"value less than 0!")
