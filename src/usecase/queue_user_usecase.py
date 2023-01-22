@@ -322,7 +322,7 @@ class QueueUserUsecase:
                     raise NotFoundError()
 
             # update existing queue user status with new status
-            queue_user_result.status = body_data["status"]
+            update_existing_data(queue_user_result, {"status": body_data["status"]})
 
             # validate updated queue user
             QueueUser.validate({**convert_model_to_dict(queue_user_result)})
