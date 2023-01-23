@@ -116,6 +116,12 @@ Run docker compose
 docker-compose up --build
 ```
 
+Push image to docker repo
+```sh
+docker tag <local-image>:<tagname> <new-repo>:<tagname>
+docker push <new-repo>:<tagname>
+```
+
 ## Note
 
 ### [Application Factory](https://flask.palletsprojects.com/en/2.1.x/tutorial/factory/)

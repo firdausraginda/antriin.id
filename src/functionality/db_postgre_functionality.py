@@ -1,13 +1,14 @@
 from src.lib.model_v2 import Admin, Organization, Queue, QueueUser, User
-from sqlmodel import Session
-from sqlmodel import select, col
+from sqlmodel import create_engine, Session, select, col
 
 
 class DBPostgreFunctionality:
     """Handle DB connection & operation to antriin DB"""
 
-    def __init__(self, engine) -> None:
-        self._engine = engine
+    def __init__(self) -> None:
+        self._engine = create_engine(
+            "postgresql+psycopg2://postgres:db-sandbox-local@localhost:5432/antriin_db"
+        )
 
     def start_session(self):
         """initiate session to database"""
