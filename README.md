@@ -125,7 +125,7 @@ docker run -d -p 8089:8089 antriin_id
 
 Run docker compose
 ```sh
-docker-compose up --build
+docker-compose up -d
 ```
 
 Push image to docker repo
