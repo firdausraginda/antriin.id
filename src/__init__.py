@@ -22,9 +22,6 @@ from src.usecase.user_usecase import UserUsecase
 # import functionality
 from src.functionality.db_postgre_functionality import DBPostgreFunctionality
 
-# import lib
-# from sqlmodel import SQLModel, create_engine
-
 # import auth
 from src.auth.admin_auth import admin_auth
 from src.auth.user_auth import user_auth
@@ -33,12 +30,6 @@ from src.auth.user_auth import user_auth
 def create_app(test_config=None):
 
     app = Flask(__name__)
-    # engine = create_engine(os.environ.get("SQLALCHEMY_DB_URI"))
-    # engine = create_engine("sqlite:///antriin.db")
-
-    # @app.before_first_request
-    # def create_db():
-    #     SQLModel.metadata.create_all(engine)
 
     if test_config is None:
         app.config.from_mapping(

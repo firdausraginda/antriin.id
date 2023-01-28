@@ -4,3 +4,4 @@ vir-env
 .git
 .gitignore
 __pycache__/
+database.ini

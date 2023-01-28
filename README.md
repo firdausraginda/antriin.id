@@ -72,6 +72,17 @@ export FLASK_APP=src
 export SQLALCHEMY_DB_URI=sqlite:///antriin.db
 ```
 
+## database.ini
+create `database.ini` file
+```
+[postgresql]
+host=localhost
+port=5432
+database=antriin_db
+username=postgres
+password=db-sandbox-local
+```
+
 ### Swagger
 
 * [flasgger](https://github.com/flasgger/flasgger)

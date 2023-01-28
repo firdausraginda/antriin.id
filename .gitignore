@@ -1,3 +1,4 @@
 vir-env
 .env
 __pycache__/
+database.ini
