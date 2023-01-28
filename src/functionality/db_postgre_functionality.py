@@ -9,7 +9,7 @@ class DBPostgreFunctionality:
     def __init__(self) -> None:
         self._parse_config = parse_config()
         self._engine = create_engine(
-            f"postgresql+psycopg2://{self._parse_config['username']}:{self._parse_config['password']}@{self._parse_config['host']}:{self._parse_config['port']}/{self._parse_config['database']}"
+            f"postgresql+psycopg2://{self._parse_config['username']}:{self._parse_config['password']}@{self._parse_config['host']}/{self._parse_config['database']}"
         )
 
     def start_session(self):

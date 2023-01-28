@@ -73,12 +73,12 @@ export SQLALCHEMY_DB_URI=sqlite:///antriin.db
 ```
 
 ## database.ini
-create `database.ini` file
-adjust value with the `environment` value in `docker-compose.yaml`
+* create `database.ini` file
+* adjust value with the `environment` value in `docker-compose.yaml`
+*if running flask & postgres using docker, the DB `host:port` can be replaced by DB service name in `docker-compose.yaml`*
 ```
 [postgresql]
-host=localhost
-port=8088
+host=postgres_db
 database=antriin-db
 username=super_admin
 password=password
