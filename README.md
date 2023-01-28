@@ -74,13 +74,14 @@ export SQLALCHEMY_DB_URI=sqlite:///antriin.db
 
 ## database.ini
 create `database.ini` file
+adjust value with the `environment` value in `docker-compose.yaml`
 ```
 [postgresql]
 host=localhost
-port=5432
-database=antriin_db
-username=postgres
-password=db-sandbox-local
+port=8088
+database=antriin-db
+username=super_admin
+password=password
 ```
 
 ### Swagger
@@ -131,6 +132,34 @@ Push image to docker repo
 ```sh
 docker tag <local-image>:<tagname> <new-repo>:<tagname>
 docker push <new-repo>:<tagname>
+```
+
+#### Run postgres docker (without docker-compose)
+Pull postgresql image
+```sh
+docker pull postgres
+```
+
+List down docker network
+```sh
+docker network ls
+```
+
+Create docker network
+```sh
+docker network create <network-name>
+```
+
+Create container
+```sh
+docker run -d \
+-p 8088:5432 \
+-e POSTGRES_PASSWORD=password \
+-e POSTGRES_USER=super_admin \
+-e POSTGRES_DB=antriin-db \
+--name antriin-postgres \
+--net antriinid-network \
+postgres
 ```
 
 ## Note
