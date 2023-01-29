@@ -72,10 +72,10 @@ export FLASK_APP=src
 export SQLALCHEMY_DB_URI=sqlite:///antriin.db
 ```
 
-## database.ini
-* create `database.ini` file
-* adjust value with the `environment` value in `docker-compose.yaml`
-*if running flask & postgres using docker, the DB `host:port` can be replaced by DB service name in `docker-compose.yaml`*
+* `database.ini`
+  * create `database.ini` file
+  * adjust value of `database.ini` file with the `environment` value in `docker-compose.yaml`
+  * if running flask & postgres using docker, the DB `host:port` can use DB service name in `docker-compose.yaml`
 ```
 [postgresql]
 host=postgres_db
@@ -87,79 +87,64 @@ password=password
 ### Swagger
 
 * [flasgger](https://github.com/flasgger/flasgger)
-refer to these docs to set `swagger.py`:
+  * refer these docs to set `swagger.py`:
     * [initializing flasgger with default data](https://github.com/flasgger/flasgger#initializing-flasgger-with-default-data)
     * [custom default configurations](https://github.com/flasgger/flasgger#customize-default-configurations)
+* refer [here](https://github.com/flasgger/flasgger#using-external-yaml-files) to define API docs in yaml file
+* refer [here](https://swagger.io/docs/specification/2-0/authentication/) to define authorization
+* swagger localhost: `http://127.0.0.1:5000/api/docs`
 
-refer [here](https://github.com/flasgger/flasgger#using-external-yaml-files) to define API docs in yaml file
-
-refer [here](https://swagger.io/docs/specification/2-0/authentication/) to define authorization
-
-swagger localhost: `http://127.0.0.1:5000/api/docs`
-
-install flasgger for better documentation
+Install flasgger for better documentation
 ```sh
 pip3 install -U setuptools
-```
-
-```sh
 pip3 install flasgger
 ```
 
 ### Gunicorn
+Install gunicorn
+```sh
+pip3 install gunicorn
+```
+
 Run this command **outside the virtual env**
 ```sh
 gunicorn -w 4 --reload -b 0.0.0.0:8089 'src:create_app()'
 ```
 
 ### Docker
+
+#### Docker using `Dockerfile`
+
+Create `Dockerfile`
+
 Build docker image
 ```sh
-docker build -t antriin_id .
+docker build -t antriin-id .
 ```
 
 Create and run container
 ```sh
-docker run -d -p 8089:8089 antriin_id
+docker run -d -p 8089:8089 --name antriin-id-app antriin-id
 ```
+
+Push image to dockerhub repo
+```sh
+docker tag antriin-id:latest firdausraginda/antriin-id:latest
+docker push firdausraginda/antriin-id:latest
+```
+
+#### Docker using `docker-compose.yaml`
+
+Create `docker-compose.yaml` file
 
 Run docker compose
 ```sh
 docker-compose up -d
 ```
 
-Push image to docker repo
+Stop & remove docker container
 ```sh
-docker tag <local-image>:<tagname> <new-repo>:<tagname>
-docker push <new-repo>:<tagname>
-```
-
-#### Run postgres docker (without docker-compose)
-Pull postgresql image
-```sh
-docker pull postgres
-```
-
-List down docker network
-```sh
-docker network ls
-```
-
-Create docker network
-```sh
-docker network create <network-name>
-```
-
-Create container
-```sh
-docker run -d \
--p 8088:5432 \
--e POSTGRES_PASSWORD=password \
--e POSTGRES_USER=super_admin \
--e POSTGRES_DB=antriin-db \
---name antriin-postgres \
---net antriinid-network \
-postgres
+docker-compose down
 ```
 
 ## Note
