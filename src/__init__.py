@@ -42,7 +42,7 @@ def create_app(test_config=None):
 
     @app.get("/health")
     def check_health():
-        return jsonify({"message": "running very well!"})
+        return jsonify({"message": "running well!"})
 
     # init functionality
     db_postgre_functionality = DBPostgreFunctionality()
