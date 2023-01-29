@@ -71,16 +71,18 @@ gunicorn -w 4 --reload -b 0.0.0.0:8089 'src:create_app()'
 
 ### Config File
 
-* `.env` file
-```
-export SECRET_KEY="dev"
-```
-
 * `.flaskenv` file
+needed when using sqlite to store data & run via `flask run` local
 ```
 export FLASK_ENV=development
 export FLASK_APP=src
 export SQLALCHEMY_DB_URI=sqlite:///antriin.db
+```
+
+* `.env` file
+this is confidential file, don't need push to git or dockerhub repo
+```
+export SECRET_KEY="dev"
 ```
 
 * `database.ini`
