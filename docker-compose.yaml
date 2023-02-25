@@ -1,8 +1,22 @@
+version: '3'
 services:
   app:
-    build: .
-    container_name: antriin_id
+    image: firdausraginda/antriin_id:latest
     ports:
       - 8089:8089
     volumes:
       - .:/app
+  postgres_db:
+    image: firdausraginda/antriin-db-postgres:latest
+    ports:
+      - 8088:5432
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=super_admin
+      - POSTGRES_DB=antriin-db
+    volumes:
+      - ./src/config/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+      - /Users/agi/Documents/antriin-db-volumes:/var/lib/postgresql/data
+
+# volumes:
+#   pgdata
