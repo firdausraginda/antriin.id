@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS public.queue (
     id SERIAL NOT NULL,
     name character varying COLLATE pg_catalog."default" NOT NULL,
     description character varying COLLATE pg_catalog."default",
-    short_url character(5) [] COLLATE pg_catalog."default" NOT NULL,
+    short_url character varying(5) COLLATE pg_catalog."default" NOT NULL,
     current_queue_number integer NOT NULL DEFAULT 0,
     total_queue_number integer NOT NULL DEFAULT 0,
     admin_id integer NOT NULL,
